@@ -1,0 +1,65 @@
+{
+  "engine": "piper-tts",
+  "voice": "en_US-ryan-high",
+  "rate": null,
+  "length_scale": 1.08,
+  "bitrate": "64k",
+  "channels": 1,
+  "sample_rate": 24000,
+  "clips": [
+    {
+      "id": "ov",
+      "title": "Overview",
+      "file": "audio/ov.mp3",
+      "script": "audio/scripts/ov.txt",
+      "duration": 130.344,
+      "label": "2:10",
+      "bytes": 1042988
+    },
+    {
+      "id": "co",
+      "title": "Companies",
+      "file": "audio/co.mp3",
+      "script": "audio/scripts/co.txt",
+      "duration": 93.552,
+      "label": "1:34",
+      "bytes": 748652
+    },
+    {
+      "id": "sc",
+      "title": "Scenario",
+      "file": "audio/sc.mp3",
+      "script": "audio/scripts/sc.txt",
+      "duration": 151.728,
+      "label": "2:32",
+      "bytes": 1214060
+    },
+    {
+      "id": "cap",
+      "title": "Capacity & supply",
+      "file": "audio/cap.mp3",
+      "script": "audio/scripts/cap.txt",
+      "duration": 101.376,
+      "label": "1:41",
+      "bytes": 811244
+    },
+    {
+      "id": "cmp",
+      "title": "AI vs 2008",
+      "file": "audio/cmp.mp3",
+      "script": "audio/scripts/cmp.txt",
+      "duration": 150.744,
+      "label": "2:31",
+      "bytes": 1206188
+    },
+    {
+      "id": "src",
+      "title": "Sources & method",
+      "file": "audio/src.mp3",
+      "script": "audio/scripts/src.txt",
+      "duration": 105.0,
+      "label": "1:45",
+      "bytes": 840236
+    }
+  ]
+}

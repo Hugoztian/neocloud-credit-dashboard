@@ -89,9 +89,45 @@ code{font-family:var(--mono);font-size:12px}
  .hd img{width:48px;height:48px}#tabs{flex-wrap:nowrap;overflow-x:auto;max-width:100%}.ctl input[type=range]{width:90px}main{padding:14px 10px 60px}.hd{padding:8px 10px}.ctl .in{padding:6px 10px}
  dl.f{grid-template-columns:96px 1fr}#cmpM{inset:0;border-radius:0}}
 @media print{header{position:static}.tab{display:block!important}}
+
+/* Listen / narration */
+.narr{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 14px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:var(--shadow)}
+.narr .nbx{display:inline-flex;align-items:center;gap:8px;background:#7a2fd6;color:#fff;border:0;border-radius:8px;padding:8px 12px;font:600 13px var(--font);cursor:pointer;min-height:40px}
+.narr .nbx:hover{filter:brightness(1.08)}.narr .nbx[aria-pressed=true]{background:#5b21b0}
+.narr .nbar{flex:1;min-width:120px;height:5px;background:var(--seg);border-radius:3px;cursor:pointer;position:relative}
+.narr .nbar>i{display:block;height:100%;width:0;background:#7a2fd6;border-radius:3px}
+.narr .nt{font:12px var(--mono);color:var(--mut);min-width:78px}
+.narr details{flex:1 1 100%}.narr summary{cursor:pointer;color:var(--mut);font-size:12.5px}
+.narr .tx{margin:8px 0 0;font-size:13.5px;line-height:1.55;color:var(--txt);white-space:pre-wrap}
+
+/* Scenario gold sliders */
+.scn-panel{padding:16px 18px 18px}
+.scn-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.goldw{display:grid;grid-template-columns:158px 1fr 70px;gap:8px 14px;align-items:center;margin:8px 0}
+.goldw label{font-size:13px;color:var(--mut)}
+.goldw output{font:600 13.5px var(--mono);color:var(--txt);text-align:right}
+input[type=range].gold{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:4px;background:#2a3648;outline:none}
+[data-theme=light] input[type=range].gold{background:#d9dde6}
+input[type=range].gold::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.22);box-shadow:0 1px 4px rgba(0,0,0,.4);cursor:pointer}
+input[type=range].gold::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:1px solid rgba(0,0,0,.22);cursor:pointer}
+.scn-extras{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:12px;font-size:13px;color:var(--mut)}
+.scn-extras label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.chain .ck{flex:1;min-width:140px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.chain .ck .l{font-size:10.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.chain .ck .v{font-size:13px;margin-top:4px;line-height:1.4}
+.chain .arr{display:flex;align-items:center;color:var(--mut2);font-size:18px}
+.flg{display:inline-block;font-size:10.5px;font-weight:600;border-radius:4px;padding:1px 6px;margin:1px 3px 1px 0;white-space:nowrap}
+.flg.warn{background:rgba(240,180,80,.16);color:var(--warn)}
+.flg.bad{background:rgba(255,107,107,.15);color:var(--neg)}
+.flg.ok{background:rgba(60,180,120,.15);color:var(--pos)}
+.what p{margin:0 0 8px;font-size:14px;line-height:1.55}.what p:last-child{margin:0}
+.what .ord{font-weight:650;color:var(--acc)}
+@media(max-width:860px){.goldw{grid-template-columns:1fr 64px}.goldw label{grid-column:1/-1}}
+
 </style></head><body>
 <header><div class="hd"><img src="logo.png" alt="Neocloud Credit Dashboard logo" width="72" height="72" style="border-radius:50%;margin-right:16px;flex:none;align-self:center"><div><h1>Neocloud Credit Dashboard</h1><div class="s">Debt · liquidity · maturities · market pricing · stress tests · checked against SEC filings</div></div><div class="sp"></div>
-<div class="seg" id="tabs"><button data-t="ov" class="on">Overview</button><button data-t="co">Companies</button><button data-t="cm">Credit &amp; stress</button><button data-t="cap">Capacity &amp; supply</button><button data-t="cmp">AI vs 2008</button><button data-t="src">Sources &amp; method</button></div>
+<div class="seg" id="tabs"><button data-t="ov" class="on">Overview</button><button data-t="co">Companies</button><button data-t="sc">Scenario</button><button data-t="cap">Capacity &amp; supply</button><button data-t="cmp">AI vs 2008</button><button data-t="src">Sources &amp; method</button></div>
 <button class="tbtn" id="theme" title="Switch light / dark theme">◐ <span id="thl">Light</span></button></div>
 <div class="ctl" id="ctl"><div class="in">
  <span class="g" title="Cash used for net debt and runway">Basis <span class="seg" data-k="basis"><button data-v="corp" class="on">Corporate</button><button data-v="proj">Project-funded</button></span></span>
@@ -99,8 +135,8 @@ code{font-family:var(--mono);font-size:12px}
  <span class="g">Debt <span class="seg" data-k="debt"><button data-v="headline" class="on">Headline</button><button data-v="lease">Lease-adjusted</button></span></span>
  <span class="g">EBITDA <span class="seg" data-k="ebitda"><button data-v="reported" class="on">Reported</button><button data-v="recurring">Recurring</button></span></span>
  <span class="g">GPU revenue <input type="range" id="sHair" min="0" max="40" step="5" value="0" aria-label="GPU revenue haircut"><output id="oHair">0%</output></span>
- <span class="g">Refi shock <input type="range" id="sShock" min="0" max="400" step="25" value="0" aria-label="Refinancing shock"><output id="oShock">+0bp</output></span>
- <span class="g">Capex delay <input type="range" id="sDelay" min="0" max="6" step="1" value="0" aria-label="Capex delay"><output id="oDelay">0 mo</output></span>
+ <span class="g">Refi shock <input type="range" id="sShock" min="0" max="600" step="25" value="0" aria-label="Refinancing shock"><output id="oShock">+0bp</output></span>
+ <span class="g">Capex delay <input type="range" id="sDelay" min="0" max="12" step="1" value="0" aria-label="Capex delay"><output id="oDelay">0 mo</output></span>
  <button class="btn" id="reset">Reset</button><span id="stFlag" class="flag"></span>
 </div></div></header>
 <main>
@@ -131,15 +167,61 @@ code{font-family:var(--mono);font-size:12px}
  <div class="card tw" id="coTable"><table id="coT"></table></div>
  <div class="cards" id="coCards" style="display:none"></div>
 </section>
-<section class="tab" id="t-cm">
- <h2>Stress-test sandbox</h2>
- <div class="card"><div class="note" style="margin-bottom:8px">Move the sliders in the bar above; every figure on the page recalculates in your browser with <code>engine.js</code>. The haircut cuts GPU-priced revenue and its EBITDA and operating cash flow one-for-one; the refinancing shock adds the bp to debt maturing within 24 months (interest and burn); a capex delay spends that many months of burn before new revenue arrives.</div>
- <div class="kpis" id="stK" style="margin-bottom:6px"></div>
- <div class="tw"><table id="stT"></table></div></div>
+<section class="tab" id="t-sc">
+ <h2>Scenario</h2>
+ <p class="note">Live stress of the 11 scored names through <code>engine.js</code>. Basis, financing, debt and EBITDA stay in the bar above. Every stressed figure is <span class="b Calc">Calc</span>. Parameters adopted from an external review are labelled in Method &amp; assumptions. Missing data is n/a — we do not estimate it silently.</p>
+ <div class="card scn-panel">
+  <div class="scn-top">
+   <span class="note" style="margin-right:4px">Presets</span>
+   <div class="seg" id="presets"><button data-p="base" class="on">Base</button><button data-p="mild">Mild −10% / +100bp / 3 mo</button><button data-p="severe">Severe −25% / +250bp / 6 mo</button><button data-p="crisis">Crisis −40% / +600bp / 12 mo</button></div>
+   <button class="btn" id="scReset">Reset</button>
+   <span id="scFlag" class="flag"></span>
+  </div>
+  <div class="goldw"><label for="gHair">GPU shock</label><input type="range" class="gold" id="gHair" min="0" max="40" step="5" value="0" aria-label="GPU shock"><output id="goHair">0%</output>
+   <label for="gShock">Refi shock</label><input type="range" class="gold" id="gShock" min="0" max="600" step="25" value="0" aria-label="Refinancing shock"><output id="goShock">+0bp</output>
+   <label for="gDelay">Capex delay</label><input type="range" class="gold" id="gDelay" min="0" max="12" step="1" value="0" aria-label="Capex delay"><output id="goDelay">0 mo</output>
+   <label for="gUndr">Undrawn haircut</label><input type="range" class="gold" id="gUndr" min="0" max="100" step="25" value="0" aria-label="Undrawn facilities haircut"><output id="goUndr">auto 0%</output>
+   <label for="gFrz">Prepay freeze</label><input type="range" class="gold" id="gFrz" min="0" max="100" step="25" value="0" aria-label="Prepayment freeze"><output id="goFrz">auto 0%</output>
+  </div>
+  <div class="scn-extras">
+   <label><input type="checkbox" id="gRefi"> HY refi window closed <span class="note">(2026–27 maturities of non-IG names paid from cash or equity)</span></label>
+   <span class="note" id="scDerived"></span>
+  </div>
+ </div>
+ <div class="kpis" id="scK"></div>
+ <h2>What happens</h2>
+ <div class="card what" id="scWhat"></div>
  <div class="grid2" style="margin-top:14px">
+  <div class="card"><h3>Base vs stressed score <span class="b Calc">Calc</span></h3><div class="ch" style="height:340px"><canvas id="cDb"></canvas></div><p class="note">Dumbbell: gold = headline score, purple = stressed. Click a bar to open the drawer.</p></div>
+  <div class="card"><h3>Score distribution <span class="b Calc">Calc</span></h3><div class="ch" style="height:340px"><canvas id="cDist"></canvas></div></div>
+ </div>
+ <div class="card" style="margin-top:14px"><h3>Aggregate funding-gap waterfall <span class="b Calc">Calc</span></h3><div class="ch" style="height:260px"><canvas id="cWf"></canvas></div><p class="note">Starting usable liquidity of the 11 scored names, minus delay cost, delay penalties, and 24-month (or closed-window) principal, floored at a set-wide gap. Individual gaps do not equal this waterfall if some names have surplus liquidity that cannot offset others.</p></div>
+ <h2>Consequences chain</h2>
+ <div class="card"><div class="chain" id="scChain"></div></div>
+ <h2>Company consequences <span class="note" id="scMode"></span></h2>
+ <div class="card tw"><table id="scTbl"></table><p class="note">Implied buckets are Calc, not a rating. Hard caps only worsen a bucket (see Method). Construction-phase landlords use project-funded runway vs months to energisation instead of interest-cover flags. Solvency (gap &gt; 35% of stressed market cap) is n/a — market caps are not in the dataset. Click a row for the drawer.</p></div>
+ <h2>P&amp;L and cash (Calc, annualised)</h2>
+ <div class="card tw"><table id="scPnL"></table></div>
+ <h2>Balance sheet, credit and implied rating (Calc)</h2>
+ <div class="card tw"><table id="scBS"></table></div>
+ <h2>Capex delay effects (Calc)</h2>
+ <div class="card tw"><table id="scDelay"></table><p class="note">Rent-credit penalties (2 days per day late) are applied only where incremental ARR is disclosed (CoreWeave, I-Ren). Backlog at risk is n/a without a delivery curve; at a 12-month delay we show 20% of disclosed backlog as a qualitative at-risk amount (our rubric). Time to revenue is the disclosed timing plus N months.</p></div>
+ <h2>Contagion and counterparties</h2>
+ <div class="grid2">
+  <div class="card tw"><h3>Debt at risk by holder <span class="b Calc">Calc (Instrument Proxy)</span></h3><table id="scHold"></table><p class="note">Instrument-to-holder proxy applied to debt of flagged names only. Privates and unnamed instruments go to Opaque / undisclosed. We do not have a true holder register.</p></div>
+  <div class="card tw"><h3>Tenants, customers and backstops</h3><table id="scCont"></table></div>
+ </div>
+ <h2>Watch indicators (which conditions tighten)</h2>
+ <div class="card tw"><table id="scWatch"></table><p class="note">The 55 / 45 similarity and scale scores are structural and do not change with the sliders. We only flag when this scenario tightens a named watch condition. We do not reprice CDS.</p></div>
+ <h2>Method &amp; assumptions</h2>
+ <div class="card" id="scMeth"></div>
+ <h2>Stress-test charts</h2>
+ <div class="kpis" id="stK" style="margin-bottom:6px"></div>
+ <div class="card tw" style="margin-bottom:14px"><table id="stT"></table></div>
+ <div class="grid2">
   <div class="card"><h3>Maturity wall ($bn principal) <select class="sel" id="mwSel" style="float:right" aria-label="Maturity wall selection"></select></h3><div class="ch" style="height:330px"><canvas id="cMw"></canvas></div><p class="note">Reported ladders; IREN (June) and Applied Digital (May) fiscal years mapped to the calendar year they end in. Dashed line = liquidity of the selected names under the current settings (Calc). Oracle, SpaceX and Nscale have no full ladder in view; Galaxy has a ladder but no liquidity inputs.</p></div>
-  <div class="card"><h3>Leverage vs coverage (live)</h3><div class="ch" style="height:330px"><canvas id="cSc"></canvas></div><p class="note">Net debt / run-rate EBITDA vs EBITDA / interest (Calc). Names with EBITDA ≤ 0 or net cash are left off the plot.</p></div>
-  <div class="card"><h3>Runway: corporate vs project-funded (months)</h3><div class="ch" style="height:330px"><canvas id="cRw"></canvas></div><p class="note">Corporate = unrestricted cash + committed undrawn; project-funded adds restricted / ring-fenced cash. Capped at 36.</p></div>
+  <div class="card"><h3>Leverage vs coverage (live)</h3><div class="ch" style="height:330px"><canvas id="cSc"></canvas></div><p class="note">Net debt / run-rate EBITDA vs EBITDA / interest (Calc). Names with EBITDA ≤ 0 or net cash are left off the plot. Leverage above 99x is shown as n/m in tables.</p></div>
+  <div class="card"><h3>Runway: corporate vs project-funded (months)</h3><div class="ch" style="height:330px"><canvas id="cRw"></canvas></div><p class="note">Corporate = unrestricted cash + committed undrawn (after any undrawn haircut, sweep and freeze); project-funded adds restricted / ring-fenced cash. Capped at 36.</p></div>
   <div class="card"><h3>Financing cost by instrument</h3><div class="ch" style="height:330px"><canvas id="cFc"></canvas></div><p class="note">Coupon / effective rate <span class="b Reported">Reported</span> or market yield <span class="b News">News</span>.</p></div>
  </div>
  <h2>Credit math by company <span class="note" id="cmMode"></span></h2>
@@ -147,6 +229,7 @@ code{font-family:var(--mono);font-size:12px}
  <h2>Credit score rubric (Calc, 0-100)</h2>
  <div class="card tw"><table id="rubT"></table></div>
 </section>
+
 <section class="tab" id="t-cap">
  <h2>Capacity &amp; backlog</h2>
  <div class="grid2">
@@ -218,7 +301,7 @@ const hCov=v=>!ok(v)?'':v>=5?'hm1':v>=3?'hm2':v>=1?'hm3':'hm4';
 const hRun=r=>!r?'':r.self||r.run>=24?'hm1':r.run>=12?'hm2':r.run>=6?'hm3':'hm4';
 const hM24=v=>!ok(v)?'':v>=3?'hm1':v>=1.5?'hm2':v>=1?'hm3':'hm4';
 const hSp=v=>!ok(v)?'':v<=150?'hm1':v<=350?'hm2':v<=500?'hm3':'hm4';
-const levTxt=r=>!r?'n/a':r.E<=0?'n/m':r.nd<0?'net cash':xx(r.lev);
+const levTxt=r=>!r?'n/a':r.E<=0?'n/m':r.nd<0?'net cash':!ok(r.lev)?'n/a':r.lev>99?'>99x':xx(r.lev);
 const m24Txt=r=>!r?'n/a':r.m24===0?'none due':r.m24==null?'n/a':xx(r.m24cov,2);
 // state + engine
 const ST=Object.assign({},NCE.BASE);let R={},R0={};
@@ -233,11 +316,11 @@ $('#lastupd').innerHTML=`<span class="dot"></span>Last updated ${stamp} SGT <spa
 $('#upd').textContent=stamp+' SGT';
 const root=document.documentElement;root.dataset.theme=localStorage.getItem('ncd-theme')||'dark';
 const thl=()=>$('#thl').textContent=root.dataset.theme==='dark'?'Light':'Dark';thl();
-$('#theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('ncd-theme',root.dataset.theme);thl();drawAll();if(drwId)openDrawer(drwId);if(cmpOpen)openCompare()};
+$('#theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('ncd-theme',root.dataset.theme);thl();$$('input.gold, #sHair, #sShock, #sDelay').forEach(paintGold);drawAll();if(drwId)openDrawer(drwId);if(cmpOpen)openCompare()};
 // tabs
 let curTab='ov';
-function show(t){curTab=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='t-'+t));
- $('#ctl').style.display=['ov','co','cm'].includes(t)?'':'none';history.replaceState(null,'','#'+t);drawAll()}
+function show(t){if(t==='cm')t='sc';curTab=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='t-'+t));
+ $('#ctl').style.display=['ov','co','sc'].includes(t)?'':'none';if(typeof writeHash==='function')writeHash();else history.replaceState(null,'','#'+t);drawAll();if(typeof narrPause==='function')narrPause()}
 $$('#tabs button').forEach(b=>b.onclick=()=>show(b.dataset.t));
 // controls
 $$('#ctl .seg').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{ST[g.dataset.k]=b.dataset.v;syncCtl();update()}));
@@ -319,6 +402,167 @@ $$('#cols button').forEach(b=>b.onclick=()=>{cols=b.dataset.c;$$('#cols button')
 function togSel(id,el){if(el.checked){if(sel.size>=3){el.checked=false;$('#cmpTxt').textContent='Compare up to 3 companies';return}sel.add(id)}else sel.delete(id);cmpBarUpd()}
 function cmpBarUpd(){$('#cmpBar').classList.toggle('on',sel.size>0);$('#cmpTxt').textContent=`${sel.size} selected: ${[...sel].map(i=>byId[i].ticker).join(', ')}`;$('#cmpGo').disabled=sel.size<2}
 $('#cmpClr').onclick=()=>{sel.clear();cmpBarUpd();renderCo();closeAll()};$('#cmpGo').onclick=()=>openCompare();
+/* ===== Scenario helpers ===== */
+const PRESETS={
+  base:{hair:0,shock:0,delay:0,refiClosed:false},
+  mild:{hair:0.10,shock:100,delay:3,refiClosed:false},
+  severe:{hair:0.25,shock:250,delay:6,refiClosed:false},
+  crisis:{hair:0.40,shock:600,delay:12,refiClosed:true}
+};
+let undrawnManual=false,freezeManual=false,scSort='dScore',scDir=1;
+function paintGold(el){if(!el)return;const min=+el.min,max=+el.max,v=+el.value,pct=max===min?0:(v-min)/(max-min)*100,rest=root.dataset.theme==='light'?'#d9dde6':'#2a3648';el.style.background=`linear-gradient(to right,#d4a24c 0%,#d4a24c ${pct}%,${rest} ${pct}%,${rest} 100%)`;}
+function activePreset(){return Object.keys(PRESETS).find(k=>{const p=PRESETS[k];return ST.hair===p.hair&&ST.shock===p.shock&&ST.delay===p.delay&&!!ST.refiClosed===!!p.refiClosed;})||null;}
+function applyPreset(name){const p=PRESETS[name];if(!p)return;ST.hair=p.hair;ST.shock=p.shock;ST.delay=p.delay;ST.refiClosed=p.refiClosed;ST.undrawnHair=null;ST.prepayFreeze=null;undrawnManual=false;freezeManual=false;syncCtl();update();}
+function scFlags(c,r){const p=NCE.PROF[c.id]||{},constr=p.role==='landlord',f=[];
+  if(!constr){if(ok(r.cov)&&r.cov<1)f.push({k:'breach',t:'Coverage breach (<1x)',cls:'bad'});else if(ok(r.cov)&&r.cov<1.5)f.push({k:'warn',t:'Coverage warning (<1.5x)',cls:'warn'});}
+  else if(p.energise!=null&&r.runProj!=null&&r.runProj<p.energise)f.push({k:'constr',t:'Project runway < months to energisation',cls:'bad'});
+  const cashU=c.inp.cash_u;
+  if((r.wall12!=null&&r.wall12>0.5*cashU)||(ok(r.m24cov)&&r.m24cov<1))f.push({k:'refi',t:'Refinancing wall',cls:'bad'});
+  const run=constr?r.runProj:r.run;
+  if(!r.self&&run!=null&&(run<6||(run<12&&ok(r.m24cov)&&r.m24cov<1)))f.push({k:'liq',t:'Liquidity',cls:'warn'});
+  return f;}
+function band(s){return s==null?null:s>=80?'BBB':s>=65?'BB':s>=45?'B':s>=25?'CCC':'CC/D';}
+function implied(c,r){let b=band(r.score);if(!b)return 'n/a';
+  const order=['BBB','BB','B','CCC','CC/D'],cap=x=>{if(order.indexOf(x)>order.indexOf(b))b=x;};
+  const p=NCE.PROF[c.id]||{},constr=p.role==='landlord';
+  const lease=NCE.calc(c,Object.assign({},ST,{debt:'lease'}));
+  let cdsN=null;if(c.mkt&&c.mkt.cds){const m=String(c.mkt.cds).replace(/,/g,'').match(/(\d+)/);if(m)cdsN=+m[1];}
+  if((lease&&ok(lease.lev)&&lease.lev>4)||(cdsN!=null&&cdsN>250))cap('BB');
+  if(ok(r.m24cov)&&r.m24cov<1)cap('B');
+  if(!constr&&((r.run!=null&&r.run<6&&ok(r.m24cov)&&r.m24cov<0.75)||(ok(r.cov)&&r.cov<1)))cap('CCC');
+  if(constr&&p.energise!=null&&r.runProj!=null&&r.runProj<p.energise)cap('CCC');
+  if(!constr&&ok(r.cov)&&r.cov<1&&r.run!=null&&r.run<3)cap('CC/D');
+  if(ST.refiClosed&&r.hy&&r.wall12!=null&&r.wall12>Math.max(r.liq,0))cap('CC/D');
+  return b;}
+function flH(fs){return fs.length?fs.map(f=>`<span class="flg ${f.cls}">${esc(f.t)}</span>`).join(''):'<span class="flg ok">None</span>';}
+function holderBucket(label){const s=String(label).toLowerCase();
+  if(/oem|vendor/.test(s))return 'OEM / vendor';
+  if(/revolver|bridge|\btla\b|construction loan|landsbankinn|rbc syndic/.test(s))return 'Banks';
+  if(/ddtl|gpu financing|magnetar|mufg|falconx|nc-1|term loan/.test(s))return 'Private credit';
+  if(/uspp|2042|barber lake|black pearl|stingray|river bend|beacon point|\babs\b|cmbs|project note/.test(s))return 'Insurers / securitised';
+  if(/note|bond|convert/.test(s))return 'Public bonds / converts';
+  return 'Opaque / undisclosed';}
+function writeHash(){const p=new URLSearchParams();
+  if(ST.hair)p.set('hair',String(Math.round(ST.hair*100)));
+  if(ST.shock)p.set('shock',String(ST.shock));
+  if(ST.delay)p.set('delay',String(ST.delay));
+  if(ST.refiClosed)p.set('refi','1');
+  if(undrawnManual&&ST.undrawnHair!=null)p.set('undrawn',String(Math.round(ST.undrawnHair*100)));
+  if(freezeManual&&ST.prepayFreeze!=null)p.set('prepay',String(Math.round(ST.prepayFreeze*100)));
+  const q=p.toString();history.replaceState(null,'','#'+curTab+(q?'?'+q:''));}
+function readHash(){const raw=location.hash.slice(1);const [tab,qs]=raw.split('?');
+  if(qs){const p=new URLSearchParams(qs);
+    if(p.has('hair'))ST.hair=Math.min(0.40,Math.max(0,+p.get('hair')/100||0));
+    if(p.has('shock'))ST.shock=Math.min(600,Math.max(0,+p.get('shock')||0));
+    if(p.has('delay'))ST.delay=Math.min(12,Math.max(0,+p.get('delay')||0));
+    if(p.has('refi'))ST.refiClosed=p.get('refi')==='1';
+    if(p.has('undrawn')){ST.undrawnHair=Math.min(1,Math.max(0,+p.get('undrawn')/100||0));undrawnManual=true;}
+    if(p.has('prepay')){ST.prepayFreeze=Math.min(1,Math.max(0,+p.get('prepay')/100||0));freezeManual=true;}}
+  return tab==='cm'?'sc':tab;}
+function renderScenario(){
+  const rows=SC.map(c=>{const r=R[c.id],r0=R0[c.id],fl=scFlags(c,r);return {c,r,r0,fl,dScore:r.score-r0.score,imp:implied(c,r),stressed:r.score<40||fl.some(f=>f.k==='breach'||f.k==='refi'||f.k==='constr')};});
+  const avgB=rows.reduce((s,x)=>s+x.r0.score,0)/rows.length,avgS=rows.reduce((s,x)=>s+x.r.score,0)/rows.length;
+  const below=rows.filter(x=>x.r.score<40),gap=rows.reduce((s,x)=>s+x.r.gap,0);
+  const worst=rows.slice().sort((a,b)=>a.dScore-b.dScore||a.r.score-b.r.score)[0];
+  const nFlag=rows.filter(x=>x.fl.length).length;
+  if($('#scK'))$('#scK').innerHTML=[
+    ['Average score change',`${dH(Math.round(avgS-avgB))}`.replace(/^/,'') ,`headline ${NF(avgB,1)} → ${NF(avgS,1)} · ${rows.length} scored · Calc`,avgS-avgB],
+    ['Names below 40 (stressed)',`${below.length} of ${rows.length}`,below.length?below.map(x=>x.c.name+' '+x.r.score).join(', '):'none · Calc'],
+    ['Worst score change',worst.dScore===0?'±0':`${worst.c.ticker} ${worst.dScore>0?'+':'−'}${Math.abs(worst.dScore)}`,`to ${worst.r.score} · Calc`],
+    ['Set-wide funding gap',fm(gap),`${rows.filter(x=>x.r.gap>0).length} names with a gap · Calc (cannot net surplus cash across firms)`],
+    ['Names with a distress flag',`${nFlag} of ${rows.length}`,'Coverage, construction runway, refinancing wall or liquidity · Calc'],
+    ['Solvency test (gap > 35% mcap)','n/a','Market caps are not in the dataset']
+  ].map((k,i)=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${i===0?`${NF(avgS-avgB,1)}`+` <span class="dl ${avgS-avgB>0?'up':avgS-avgB<0?'dn':''}">${avgS-avgB>0?'+':avgS-avgB<0?'−':''}</span>`:k[1]}</div><div class="n">${k[2]||k[1]}</div></div>`).join('');
+  /* fix first kpi value to be cleaner */
+  const kpis=[[ 'Average score change', `${avgS-avgB===0?'±0':(avgS-avgB>0?'+':'−')+NF(Math.abs(avgS-avgB),1)}`, `headline ${NF(avgB,1)} → ${NF(avgS,1)} · 11 scored · Calc` ],
+    [ 'Names below 40 (stressed)', `${below.length} of ${rows.length}`, (below.length?below.map(x=>x.c.name+' '+x.r.score).join(', '):'none')+' · Calc' ],
+    [ 'Worst score change', worst.dScore===0?'±0':`${worst.c.ticker} ${worst.dScore>0?'+':'−'}${Math.abs(worst.dScore)}`, `to ${worst.r.score} · Calc` ],
+    [ 'Set-wide funding gap', fm(gap), `${rows.filter(x=>x.r.gap>0).length} names with a gap · Calc (surpluses cannot offset other names)` ],
+    [ 'Names with a distress flag', `${nFlag} of ${rows.length}`, 'Coverage, construction runway, refinancing wall or liquidity · Calc' ],
+    [ 'Solvency (gap > 35% of mcap)', 'n/a', 'Market caps are not in the dataset' ]];
+  $('#scK').innerHTML=kpis.map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${k[2]}</div></div>`).join('');
+  if($('#scMode'))$('#scMode').textContent=modeTxt();
+  const drop=rows.filter(x=>x.dScore<0).sort((a,b)=>a.dScore-b.dScore);
+  const first=drop.length?`The largest score drops are ${drop.slice(0,3).map(x=>`${x.c.name} ${x.dScore} to ${x.r.score}`).join('; ')}.`:`No score changes on the current settings.`;
+  const gaph=rows.filter(x=>x.r.gap>0).sort((a,b)=>b.r.gap-a.r.gap);
+  const second=gaph.length?`Funding gaps open at ${gaph.map(x=>`${x.c.name} ${fm(x.r.gap)}`).join(', ')}, summing to ${fm(gap)} across the set.`:'No funding gap opens on the current settings.';
+  const tenants=rows.filter(x=>{const p=NCE.PROF[x.c.id];return p&&p.tenant&&x.fl.length;});
+  const crwvHit=rows.find(x=>x.c.id==='crwv'&&(x.stressed||x.r.gap>0||x.fl.length));
+  const third=crwvHit?`Applied Digital, Core Scientific and Galaxy are exposed where CoreWeave is a disclosed tenant. Backstops (Nvidia, Google, A-M-D) are conditional and are not assumed to be triggered. The 55 / 45 similarity scores versus 2008 do not change.`:'Third-order: supplier backstops are conditional and are not assumed to be triggered; the 55 / 45 similarity scores versus 2008 do not change.';
+  if($('#scWhat'))$('#scWhat').innerHTML=`<p><span class="ord">First order.</span> GPU shock ${Math.round(ST.hair*100)}% with tier-specific drop-through, refinancing +${ST.shock}bp on 24-month principal, and a ${ST.delay}-month capex delay${ST.refiClosed?'; the HY refinancing window is closed':''}. ${first}</p>
+    <p><span class="ord">Second order.</span> ${second} ${nFlag} of 11 names carry a distress flag. Construction-phase landlords are not flagged on interest cover; they are tested on project-funded runway versus months to energisation.</p>
+    <p><span class="ord">Third order.</span> ${third} Dilution as a share of equity is n/a (no market caps in the dataset).</p>`;
+  if($('#scChain'))$('#scChain').innerHTML=[
+    ['Shock',`GPU ${Math.round(ST.hair*100)}% · +${ST.shock}bp · ${ST.delay} mo${ST.refiClosed?' · window closed':''}`],
+    ['P&amp;L',`${rows.filter(x=>x.r.revHitQ>0).length} names with a revenue hit · Calc`],
+    ['Credit / flags',`${nFlag} flagged · ${below.length} below 40`],
+    ['Funding gap',fm(gap)],
+    ['Counterparties',crwvHit?'Landlord and backstop exposure (CoreWeave tenant)':'No new tenant flag'],
+    ['System / watch','See watch table; 55 / 45 scores unchanged']
+  ].map((x,i)=>`${i?'<div class="arr">→</div>':''}<div class="ck"><div class="l">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+  const col=k=>{scSort=k;scDir=scSort===k?-scDir:-1; /* will be set properly below */};
+  const valOf=(x,k)=>({name:x.c.name,score:x.r.score,dScore:x.dScore,lev:x.r.lev,cov:x.r.cov,run:x.r.self?999:x.r.run,m24:x.r.m24cov,gap:x.r.gap,imp:x.imp}[k]);
+  const sorted=rows.slice().sort((a,b)=>{const ka=valOf(a,scSort),kb=valOf(b,scSort);const na=!ok(ka)&&ka!==0&&ka!=='n/a'&&typeof ka!=='string',nb=!ok(kb)&&kb!==0&&typeof kb!=='string';
+    if(typeof ka==='string')return scDir*String(ka).localeCompare(String(kb));
+    if(ka==null)return 1;if(kb==null)return -1;return scDir*((ka||0)-(kb||0));});
+  const th=(k,l)=>`<th class="n s ${scSort===k?'on':''}" data-sk="${k}">${l}</th>`;
+  if($('#scTbl')){$('#scTbl').innerHTML=`<tr><th class="s ${scSort==='name'?'on':''}" data-sk="name">Company</th>${th('score','Score base → stress')}${th('dScore','Δ')}${th('lev','ND / EBITDA')}${th('cov','EBITDA / int.')}${th('run','Runway (mo)')}${th('m24','24M cover')}${th('gap','Funding gap')}<th>Implied bucket</th><th>Flags</th></tr>`+
+    sorted.map(x=>`<tr class="click" onclick="openDrawer('${x.c.id}')"><td><b>${x.c.name}</b> <span class="note">${x.c.ticker}</span></td>
+      <td class="n">${scH(x.r0.score)} → ${scH(x.r.score)}</td><td class="n">${dH(x.dScore)}</td>
+      <td class="n ${hLev(x.r)}">${levTxt(x.r0)} → ${levTxt(x.r)}</td>
+      <td class="n ${hCov(x.r.cov)}">${xx(x.r0.cov,2)} → ${xx(x.r.cov,2)}</td>
+      <td class="n ${hRun(x.r)}">${mo(x.r0)} → ${mo(x.r)}</td>
+      <td class="n ${hM24(x.r.m24cov)}">${m24Txt(x.r0)} → ${m24Txt(x.r)}</td>
+      <td class="n">${x.r.gapM24na&&x.r.gap===0?'n/a <span class="note">(no 24M ladder)</span>':fm(x.r.gap)}</td>
+      <td class="n">${esc(band(x.r0.score)||'n/a')} → <b>${esc(x.imp)}</b></td>
+      <td>${flH(x.fl)}</td></tr>`).join('');
+    $$('#scTbl th.s').forEach(h=>h.onclick=()=>{const k=h.dataset.sk;scDir=scSort===k?-scDir: (k==='name'?1:-1);scSort=k;renderScenario();});}
+  if($('#scPnL'))$('#scPnL').innerHTML=`<tr><th>Company</th><th class="n">Revenue (base → stress)</th><th class="n">EBITDA</th><th class="n">Interest</th><th class="n">FCF after capex</th><th class="n">Burn / mo</th><th class="n">Runway (mo)</th><th class="n">Funding gap</th></tr>`+
+    rows.map(x=>`<tr class="click" onclick="openDrawer('${x.c.id}')"><td><b>${x.c.name}</b></td>
+      <td class="n">${fm(x.r.rev0)} → ${fm(x.r.rev)}</td><td class="n">${fm(x.r0.E)} → ${fm(x.r.E)}</td>
+      <td class="n">${fm(x.r0.I)} → ${fm(x.r.I)}</td><td class="n">${fm(x.r.fcf)}</td>
+      <td class="n">${fm(x.r0.burn)} → ${fm(x.r.burn)}</td><td class="n ${hRun(x.r)}">${mo(x.r)}</td>
+      <td class="n">${x.r.gapM24na&&!x.r.gap?'n/a':fm(x.r.gap)}</td></tr>`).join('');
+  if($('#scBS'))$('#scBS').innerHTML=`<tr><th>Company</th><th class="n">Net debt</th><th class="n">ND / EBITDA</th><th class="n">EBITDA / int.</th><th class="n">24M cover</th><th class="n">Score Δ</th><th>Implied bucket</th><th>Dilution to close gap</th></tr>`+
+    rows.map(x=>`<tr class="click" onclick="openDrawer('${x.c.id}')"><td><b>${x.c.name}</b></td>
+      <td class="n">${fm(x.r.nd)}</td><td class="n ${hLev(x.r)}">${levTxt(x.r)}</td><td class="n ${hCov(x.r.cov)}">${xx(x.r.cov,2)}</td>
+      <td class="n ${hM24(x.r.m24cov)}">${m24Txt(x.r)}</td><td class="n">${dH(x.dScore)}</td>
+      <td>${esc(band(x.r0.score)||'n/a')} → <b>${esc(x.imp)}</b></td>
+      <td class="n">${fm(x.r.gap)} <span class="note">· % of mcap n/a</span></td></tr>`).join('');
+  if($('#scDelay'))$('#scDelay').innerHTML=`<tr><th>Company</th><th>Disclosed time to revenue</th><th>Plus delay</th><th class="n">Delay cash cost</th><th class="n">Rent-credit penalty</th><th>Termination risk</th><th class="n">RPO / backlog at risk</th></tr>`+
+    rows.map(x=>{const p=NCE.PROF[x.c.id]||{};return `<tr class="click" onclick="openDrawer('${x.c.id}')"><td><b>${x.c.name}</b></td>
+      <td class="note">${esc(x.c.timing||'n/a')}</td>
+      <td>${ST.delay?('+'+ST.delay+' mo · Calc'):'—'}</td>
+      <td class="n">${fm(x.r.delayCost)}</td>
+      <td class="n">${p.incArr?fm(x.r.penalty):'n/a <span class="note">(no incremental ARR)</span>'}</td>
+      <td>${x.r.termRisk?'<span class="flg warn">Flagged (≥9 mo)</span>':'—'}</td>
+      <td class="n">${ST.delay>=12&&x.c.backlog!=null?fm(x.r.rpoRisk)+' <span class="note">(20% of backlog, our rubric)</span>':'n/a'}</td></tr>`;}).join('');
+  const flagged=rows.filter(x=>x.fl.length||x.r.score<40||x.r.gap>0);
+  const buckets={'Banks':0,'Private credit':0,'OEM / vendor':0,'Insurers / securitised':0,'Public bonds / converts':0,'Opaque / undisclosed':0};
+  flagged.forEach(x=>{if(x.c.stack)x.c.stack.forEach(([lab,bnv])=>{buckets[holderBucket(lab)]+=bnv||0;});else buckets['Opaque / undisclosed']+=(x.c.debt||0)/1000;});
+  const priv=C.filter(c=>c.listing==='Private');
+  if($('#scHold'))$('#scHold').innerHTML=`<tr><th>Holder (proxy)</th><th class="n">Debt at risk ($bn)</th></tr>`+Object.entries(buckets).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v?NF(v,2):'0.00'}</td></tr>`).join('')+`<tr><td>Private companies (all undisclosed)</td><td class="n">${priv.some(c=>c.debt) ? NF(priv.reduce((s,c)=>s+(c.debt||0)/1000,0),2)+' (partial; several n/a)':'n/a'}</td></tr>`;
+  if($('#scCont'))$('#scCont').innerHTML=`<tr><th>Company</th><th>Concentration / tenant</th><th>Backstops</th><th>Contagion note</th></tr>`+
+    C.filter(c=>c.listing!=='Private').map(c=>{const p=NCE.PROF[c.id]||{},x=rows.find(z=>z.c.id===c.id),hit=x&&(x.fl.length||x.r.gap>0);
+      const tenant=p.tenant,note=tenant&&hit&&(c.id==='apld'||c.id==='corz'||c.id==='wyfi')?`Exposed if ${tenant} is stressed · Calc`:(c.id==='glxy'&&crwvHit?'Single-tenant CoreWeave · second-order exposure · Calc':(!c.inp?'n/a - not scored':(hit?'See flags':'—')));
+      return `<tr><td><b>${c.name}</b></td><td class="note">${esc(c.conc||'n/a')}</td><td class="note">${esc((c.backstops&&c.backstops.length?c.backstops.join('; '):'None disclosed'))}</td><td class="note">${note}</td></tr>`;}).join('');
+  const crwv=rows.find(x=>x.c.id==='crwv'),orcl=rows.find(x=>x.c.id==='orcl'),nvdaNames=rows.filter(x=>x.c.nvidia&&x.fl.some(f=>f.k==='liq'||f.k==='breach'||f.k==='refi'));
+  const watch=[
+    ['Bank holdings','Large-bank AI-adjacent C&I: ~$150bn outstanding (late 2025) · News','n/a - no holder split in filings; flagged-name debt is in the proxy table',false],
+    ['Credit spreads','CoreWeave 5-yr CDS 1,100-1,200bp; Oracle CDS >300bp (18 Nov 2026) · News',crwv&&crwv.dScore<=-10?'Pressured: CoreWeave score falls 10+ points. We do not reprice CDS.':'Unchanged (no spread model)',!!(crwv&&crwv.dScore<=-10)],
+    ['OpenAI funding','~$11bn of up to ~$20bn closed (6 Nov 2026) · News',(orcl&&orcl.fl.length)||(crwv&&crwv.fl.some(f=>f.k==='liq'||f.k==='refi'))?'Pressured: a key OpenAI counterparty (Oracle or CoreWeave) is flagged.':'Not tightened by this scenario',!!((orcl&&orcl.fl.length)||(crwv&&crwv.fl.some(f=>f.k==='liq'||f.k==='refi')))],
+    ['Refinancing / maturity walls','CoreWeave $11.0bn due 2027 · Reported',rows.filter(x=>x.fl.some(f=>f.k==='refi')).length?'Pressured: '+rows.filter(x=>x.fl.some(f=>f.k==='refi')).map(x=>x.c.name).join(', '):'Not tightened beyond names already short at Base',rows.some(x=>x.fl.some(f=>f.k==='refi')&&x.dScore<0)],
+    ['Nvidia support','Neocloud commitments $32bn, contingent · News',nvdaNames.length?'Pressured: Nvidia-backed names flagged — '+nvdaNames.map(x=>x.c.name).join(', ')+'. Commitments only bite once projects are financed.':'Not triggered in this scenario',nvdaNames.length>0],
+    ['Off-balance-sheet build-up','Fed: >$3tn at seven firms · News','Unchanged — structural, not slider-driven',false]
+  ];
+  if($('#scWatch'))$('#scWatch').innerHTML=`<tr><th>Indicator</th><th>Current value (sourced)</th><th>In this scenario</th></tr>`+watch.map(w=>`<tr><td><b>${w[0]}</b></td><td class="note">${esc(w[1])}</td><td>${w[3]?'<span class="flg warn">Pressured</span> ':'<span class="flg ok">Unchanged</span> '}<span class="note">${esc(w[2])}</span></td></tr>`).join('');
+  if($('#scMeth'))$('#scMeth').innerHTML=`<p class="note" style="margin:0 0 10px">All stressed math is <span class="b Calc">Calc</span> from headline filing inputs in <code>engine.js</code>. Adopted external-review parameters are labelled below. We verified the review's company figures against this engine and the filings before using them (see the audit list at the bottom of this panel).</p>
+    <ul style="margin:0;padding-left:18px;line-height:1.6;font-size:13.5px">${NCE.ASSUMPTIONS.map(a=>`<li><span class="b Calc">${esc(a.tag)}</span> ${esc(a.t)}</li>`).join('')}
+    <li><span class="b Calc">Calc</span> Funding gap = 24-month principal due (or, if the HY window is closed, 2026–27 HY maturities) + delay cash cost + delay penalties − usable liquidity (unrestricted cash + undrawn after any haircut − LTV sweep − prepay freeze). Surpluses on one name are not netted against another. Leverage above 99x or EBITDA ≤ 0 is shown as n/m. Base / headline scores and runways are unchanged when all sliders are at zero.</li>
+    <li><b>Verified vs the external review's cited figures.</b> Applied Digital runway 4.9 months and Cipher 1.5 months: confirmed on our headline engine. CoreWeave ~$9bn of prepayments expected in 3 months (Mgmt), Nebius $10bn (2026) and $17–20bn (2027) (Mgmt), CoreWeave $7.7bn OEM / vendor financing (Reported), and CoreWeave 2031 notes at 15.64% with CDS 1,100–1,200bp (News, 18 Nov): confirmed. CoreWeave runway: the review said 3.7 months; our engine is 3.9 months (we use 3.9). Nebius: the review said 4.3 months, which matches our <em>pro-forma</em> runway after the Citi facility, not headline 2.9 months (we use 2.9 unless the pro-forma toggle is on). TeraWulf: the review said 6.8 months; our engine is 5.5 months corporate and 8.1 months project-funded (we do not use 6.8). The 2027 Nebius prepayment range is not included in the freeze dollars.</li>
+    </ul>`;
+}
+
 // CREDIT & STRESS
 function renderStress(){const st=SC.map(c=>({c,r:R[c.id],r0:R0[c.id]}));
  const med=a=>{a=a.slice().sort((x,y)=>x-y);return a[Math.floor(a.length/2)]};
@@ -402,7 +646,7 @@ function drawAll(){const ax=t=>({display:true,text:t,color:cv('--mut')}),gl={col
    options:base({onClick:(e,els,ch)=>{if(els.length){const d=ch.data.datasets[els[0].datasetIndex];openDrawer(d.ids[els[0].index])}},
     plugins:{legend:{position:'bottom',labels:{color:cv('--mut'),boxWidth:10}},tooltip:{callbacks:{label:x=>{const c=byId[x.dataset.ids[x.dataIndex]];return `${c.name}: score ${x.raw.y}, spread ${bp(c.mkt.spread)}${c.mkt.fallback?' (fallback)':''}, worst ${pct(c.mkt.worst)}${c.mkt.cds?', CDS '+c.mkt.cds:''}, debt ${bn(c.debt)}`}}}},
     scales:{x:{title:ax('Market spread over UST (bp)'),min:0,grid:gl},y:{title:ax('Credit score (live)'),min:0,max:100,grid:gl}}})})}
- if(curTab==='cm'){
+ if(curTab==='sc'){if(typeof drawScenario==='function')drawScenario();
   const pts=SC.filter(c=>R[c.id].E>0&&R[c.id].lev>0&&R[c.id].cov>0);
   mk('cSc',{type:'scatter',data:{datasets:pts.map(c=>({label:c.ticker,id:c.id,data:[{x:+R[c.id].lev.toFixed(2),y:+R[c.id].cov.toFixed(2)}],backgroundColor:tcol(c),pointRadius:7,pointHoverRadius:9}))},
    options:base({onClick:(e,els,ch)=>{if(els.length)openDrawer(ch.data.datasets[els[0].datasetIndex].id)},plugins:{legend:{position:'bottom',labels:{boxWidth:10,color:cv('--mut')}},tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${xx(x.raw.x)} leverage, ${xx(x.raw.y,2)} coverage`}}},
@@ -480,9 +724,102 @@ function openCompare(){const ids=[...sel].filter(i=>R[i]);if(ids.length<2)return
  $('#cmpM').classList.add('on');$('#ovl').classList.add('on');
  setTimeout(()=>{if(!cmpOpen)return;mk('cRad',{type:'radar',data:{labels:['Leverage','Coverage','Runway','Counterparty','Agency','Market'],datasets:ids.map((i,k)=>{const P=R[i].P,col=PAL[k];return {label:byId[i].name,data:[P.L/30,P.C/25,P.R/20,P.Q/15,P.A/5,P.M/5].map(x=>Math.round(x*100)),borderColor:col,backgroundColor:hexA(col,.18),pointBackgroundColor:col}})},
   options:{responsive:true,maintainAspectRatio:false,animation:{duration:200},plugins:{legend:{position:'bottom',labels:{color:cv('--mut'),boxWidth:10}}},scales:{r:{min:0,max:100,ticks:{stepSize:25,color:cv('--mut'),backdropColor:'rgba(0,0,0,0)'},grid:{color:cv('--line')},angleLines:{color:cv('--line')},pointLabels:{color:cv('--txt')}}}}})},60)}
+/* ===== Narration player ===== */
+const NARR_CLIPS=[
+  {id:'ov',file:'audio/ov.mp3',script:'audio/scripts/ov.txt',title:'Overview'},
+  {id:'co',file:'audio/co.mp3',script:'audio/scripts/co.txt',title:'Companies'},
+  {id:'sc',file:'audio/sc.mp3',script:'audio/scripts/sc.txt',title:'Scenario'},
+  {id:'cap',file:'audio/cap.mp3',script:'audio/scripts/cap.txt',title:'Capacity & supply'},
+  {id:'cmp',file:'audio/cmp.mp3',script:'audio/scripts/cmp.txt',title:'AI vs 2008'},
+  {id:'src',file:'audio/src.mp3',script:'audio/scripts/src.txt',title:'Sources & method'}
+];
+const narrAudio=new Audio();narrAudio.preload='metadata';
+let narrId=null,narrDur={};
+function fmtT(t){t=isFinite(t)?t:0;const s=Math.floor(t);return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+function narrPause(){narrAudio.pause();$$('.narr .nbx').forEach(b=>{b.setAttribute('aria-pressed','false');const id=b.closest('.narr').dataset.clip;b.innerHTML=`▶ Listen${narrDur[id]?' ('+narrDur[id]+')':''}`;});}
+function narrTick(){const box=$(`.narr[data-clip="${narrId}"]`);if(!box)return;const t=narrAudio.currentTime||0,d=narrAudio.duration||0;
+  box.querySelector('.nbar>i').style.width=(d?((t/d)*100):0)+'%';
+  box.querySelector('.nt').textContent=`${fmtT(t)} / ${fmtT(d)}`;}
+function mountNarr(){
+  NARR_CLIPS.forEach(n=>{
+    const tab=$('#t-'+n.id);if(!tab)return;
+    const el=document.createElement('div');el.className='narr';el.dataset.clip=n.id;
+    el.innerHTML=`<button type="button" class="nbx" aria-pressed="false" aria-label="Play narration for ${esc(n.title)}">▶ Listen</button>
+      <div class="nbar" role="slider" aria-label="Narration progress"><i></i></div>
+      <span class="nt">0:00 / —</span>
+      <details><summary>Transcript</summary><div class="tx">Loading transcript…</div></details>`;
+    if(n.id==='ov'){const u=$('#lastupd');tab.insertBefore(el,u&&u.nextSibling||tab.firstChild);}
+    else tab.insertBefore(el,tab.firstChild);
+    const meta=new Audio();meta.preload='metadata';meta.src=n.file;
+    meta.addEventListener('loadedmetadata',()=>{narrDur[n.id]=fmtT(meta.duration);const b=el.querySelector('.nbx');if(b.getAttribute('aria-pressed')!=='true')b.innerHTML=`▶ Listen (${narrDur[n.id]})`;el.querySelector('.nt').textContent=`0:00 / ${narrDur[n.id]}`;});
+    fetch(n.script).then(r=>r.ok?r.text():Promise.reject()).then(t=>{el.querySelector('.tx').textContent=t.trim();}).catch(()=>{el.querySelector('.tx').textContent='Transcript not available.';});
+    el.querySelector('.nbx').onclick=()=>{
+      if(narrId===n.id&&!narrAudio.paused){narrPause();return;}
+      narrPause();narrId=n.id;narrAudio.src=n.file;narrAudio.play().catch(()=>{});
+      el.querySelector('.nbx').setAttribute('aria-pressed','true');
+      el.querySelector('.nbx').innerHTML=`⏸ Pause${narrDur[n.id]?' ('+narrDur[n.id]+')':''}`;
+    };
+    el.querySelector('.nbar').onclick=e=>{if(narrId!==n.id||!narrAudio.duration)return;const r=e.currentTarget.getBoundingClientRect();narrAudio.currentTime=((e.clientX-r.left)/r.width)*narrAudio.duration;};
+  });
+  narrAudio.addEventListener('timeupdate',narrTick);
+  narrAudio.addEventListener('ended',narrPause);
+}
+function drawScenario(){
+  if(curTab!=='sc')return;
+  const rows=SC.map(c=>({c,r:R[c.id],r0:R0[c.id]})).sort((a,b)=>b.r0.score-a.r0.score);
+  const gold='#d4a24c',pur='#7a2fd6';
+  mk('cDb',{type:'bar',data:{labels:rows.map(x=>x.c.name),datasets:[
+    {label:'Headline',data:rows.map(x=>x.r0.score),backgroundColor:gold,borderRadius:3,barPercentage:0.55},
+    {label:'Stressed',data:rows.map(x=>x.r.score),backgroundColor:pur,borderRadius:3,barPercentage:0.55}
+  ]},options:base({indexAxis:'y',onClick:(e,els)=>{if(els.length)openDrawer(rows[els[0].index].c.id)},plugins:{legend:{position:'bottom',labels:{color:cv('--mut'),boxWidth:10}},tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${x.raw} (${x.raw-(x.datasetIndex?rows[x.dataIndex].r0.score:0)>=0?'+':''}${x.datasetIndex?x.raw-rows[x.dataIndex].r0.score:''})`}}},scales:{x:{min:0,max:100,grid:{color:cv('--line')},title:{display:true,text:'Credit score (0-100)',color:cv('--mut')}},y:{grid:{display:false}}}})});
+  const bands=[['BBB',80,100],['BB',65,80],['B',45,65],['CCC',25,45],['CC/D',0,25]];
+  const cnt=side=>bands.map(([,,hi],i)=>{const lo=bands[i][1];return SC.filter(c=>{const s=side==='s'?R[c.id].score:R0[c.id].score;return i===bands.length-1?s<bands[i-1][1]:(s>=lo&&s<hi)||(i===0&&s>=lo);}).length;});
+  /* count with band() */
+  const count=side=>bands.map(([name])=>SC.filter(c=>band(side==='s'?R[c.id].score:R0[c.id].score)===name).length);
+  mk('cDist',{type:'bar',data:{labels:bands.map(b=>b[0]),datasets:[{label:'Headline',data:count('b'),backgroundColor:gold,borderRadius:3},{label:'Stressed',data:count('s'),backgroundColor:pur,borderRadius:3}]},
+    options:base({plugins:{legend:{position:'bottom',labels:{color:cv('--mut'),boxWidth:10}}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:cv('--line')},title:{display:true,text:'Number of scored names',color:cv('--mut')}}}})});
+  const liq=SC.reduce((s,c)=>s+Math.max(R[c.id].liqBasis||0,0),0);
+  const delay=SC.reduce((s,c)=>s+(R[c.id].delayCost||0),0);
+  const pen=SC.reduce((s,c)=>s+(R[c.id].penalty||0),0);
+  const due=SC.reduce((s,c)=>s+(R[c.id].due||0),0);
+  const after=liq-delay-pen-due;
+  const wf=[{l:'Starting liquidity',v:liq},{l:'− Delay cost',v:-delay},{l:'− Delay penalties',v:-pen},{l:'− 24M / window principal',v:-due},{l:'Residual (neg. = gap)',v:after}];
+  mk('cWf',{type:'bar',data:{labels:wf.map(x=>x.l),datasets:[{data:wf.map(x=>x.v/1000),backgroundColor:wf.map(x=>x.v>=0?gold:'#7a2fd6'),borderRadius:4}]},
+    options:base({plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>fm(wf[x.dataIndex].v)}}},scales:{x:{grid:{display:false},ticks:{font:{size:10.5},color:cv('--mut')}},y:{grid:{color:cv('--line')},title:{display:true,text:'$bn',color:cv('--mut')}}}})});
+}
+
+
+/* gold sliders + presets + header range sync */
+function syncGold(){
+  const autoU=(!undrawnManual)?NCE.deriveUndrawn(ST,null):ST.undrawnHair;
+  const autoF=(!freezeManual)?NCE.deriveFreeze(ST):ST.prepayFreeze;
+  if($('#gHair')){$('#gHair').value=Math.round(ST.hair*100);$('#goHair').textContent=ST.hair?`−${Math.round(ST.hair*100)}%`:'0%';}
+  if($('#gShock')){$('#gShock').value=ST.shock;$('#goShock').textContent=`+${ST.shock}bp`;}
+  if($('#gDelay')){$('#gDelay').value=ST.delay;$('#goDelay').textContent=`${ST.delay} mo`;}
+  if($('#gUndr')){$('#gUndr').value=Math.round((undrawnManual?ST.undrawnHair:autoU)*100);$('#goUndr').textContent=(undrawnManual?'':'auto ')+`${Math.round((undrawnManual?ST.undrawnHair:autoU)*100)}%`;}
+  if($('#gFrz')){$('#gFrz').value=Math.round((freezeManual?ST.prepayFreeze:autoF)*100);$('#goFrz').textContent=(freezeManual?'':'auto ')+`${Math.round((freezeManual?ST.prepayFreeze:autoF)*100)}%`;}
+  if($('#gRefi'))$('#gRefi').checked=!!ST.refiClosed;
+  $$('#presets button').forEach(b=>b.classList.toggle('on',b.dataset.p===activePreset()));
+  if($('#scFlag'))$('#scFlag').textContent=isBase()?'':'Scenario active';
+  if($('#scDerived'))$('#scDerived').textContent=undrawnManual||freezeManual?'Undrawn / prepay: manual override.':'Undrawn and prepay freeze follow the preset / coverage / delay rules (auto).';
+  $$('input.gold, #sHair, #sShock, #sDelay').forEach(paintGold);
+}
+const _syncCtl=syncCtl;
+syncCtl=function(){_syncCtl();syncGold();};
+[['#gHair','hair',v=>v/100,false],['#gShock','shock',v=>+v,false],['#gDelay','delay',v=>+v,false],
+ ['#gUndr','undrawnHair',v=>v/100,true],['#gFrz','prepayFreeze',v=>v/100,true]].forEach(([id,k,f,man])=>{
+  const el=$(id);if(!el)return;el.addEventListener('input',e=>{ST[k]=f(e.target.value);if(man){if(k==='undrawnHair')undrawnManual=true;if(k==='prepayFreeze')freezeManual=true;}syncCtl();update();});
+});
+if($('#gRefi'))$('#gRefi').onchange=e=>{ST.refiClosed=e.target.checked;syncCtl();update();};
+if($('#presets'))$$('#presets button').forEach(b=>b.onclick=()=>applyPreset(b.dataset.p));
+if($('#scReset'))$('#scReset').onclick=()=>{Object.assign(ST,NCE.BASE);undrawnManual=false;freezeManual=false;syncCtl();update();};
+const _reset=$('#reset');if(_reset){const oldc=_reset.onclick;_reset.onclick=()=>{Object.assign(ST,NCE.BASE);undrawnManual=false;freezeManual=false;if(oldc)oldc();else{syncCtl();update();}};}
+
 // live update
-function update(){recalc();renderKpis();renderSum();renderCo();renderStress();renderCm();drawAll();if(drwId)openDrawer(drwId);if(cmpOpen)openCompare()}
+function update(){recalc();renderKpis();renderSum();renderCo();renderStress();renderCm();if(typeof renderScenario==='function')renderScenario();writeHash();drawAll();if(drwId)openDrawer(drwId);if(cmpOpen)openCompare()}
+if(typeof mountNarr==='function')mountNarr();
+const h0=(typeof readHash==='function'?readHash():location.hash.slice(1).split('?')[0]);
 syncCtl();update();
-const h0=location.hash.slice(1);if(['ov','co','cm','cap','cmp','src'].includes(h0))show(h0);
+if(['ov','co','sc','cap','cmp','src'].includes(h0)&&h0!=='ov')show(h0);
 </script>
 </body></html>

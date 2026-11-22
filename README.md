@@ -5,7 +5,7 @@ Static GitHub Pages site: a credit view of neoclouds and AI data-centre develope
 Target URL: https://hugoztian.github.io/neocloud-credit-dashboard/
 
 ## Files
-- `index.html`: the whole UI. Six tabs: Overview, Companies, Credit & stress, Capacity & supply, AI vs 2008 (with the systemic view), Sources & method. Institutional dark theme by default, light theme toggle (saved in `localStorage` key `ncd-theme`).
+- `index.html`: the whole UI. Six tabs: Overview, Companies, Scenario, Capacity & supply, AI vs 2008 (with the systemic view), Sources & method. Institutional dark theme by default, light theme toggle (saved in `localStorage` key `ncd-theme`).
 - `engine.js`: **the only place the credit math lives** (net debt, leverage, coverage, burn, runway, 24-month maturity cover, score). Used by the page (live recalculation), the build and the text export.
 - `data.js`: **generated**. Do not edit by hand.
 - `chart.umd.min.js`: vendored Chart.js (no CDN).
@@ -15,11 +15,13 @@ Target URL: https://hugoztian.github.io/neocloud-credit-dashboard/
 - `tools/sources.py`: every citation (title, URL, date, publisher).
 - `tools/build_data.py`: merges the above, runs `engine.js` (via node) for headline and pro-forma scores, and holds What's new, Coming up, AI vs 2008, systemic tables, audit, discrepancies and gaps. Writes `data.js` with the SGT build time.
 - `tools/totext.js`: writes a plain-text export for other AIs (`node tools/totext.js`).
+- `audio/`: tab narrations (mono ~64 kbps MP3), `audio/scripts/*.txt` (scripts), `audio/manifest.json` (durations). Regenerate with `python3 tools/make_audio.py` (Piper `en_US-ryan-high` by default; `--engine edge` for Microsoft voices when the network allows).
 - `.nojekyll`: serve files as-is. `preview_*.png`: local screenshots.
 
 ## Interactive features
 - Global control bar (Overview, Companies, Credit & stress): **Basis** corporate (unrestricted cash, default) vs project-funded (adds restricted / ring-fenced cash); **Financing** quarter-end (default) vs pro-forma (adds all post-quarter raises symmetrically); **Debt** headline vs lease-adjusted; **EBITDA** reported vs recurring (Nebius ex $325.1m point-in-time revenue).
-- Stress sliders: GPU revenue haircut 0 to −40%, refinancing shock +0 to +400bp, capex delay 0-6 months. Runway, coverage, 24M cover, leverage and score recalculate client-side.
+- **Scenario tab** (replaces the old Credit & stress sandbox as the sixth tab): gold-track sliders for GPU shock 0 to −40%, refinancing +0 to +600bp and capex delay 0-12 months, plus an HY-refi-window-closed toggle, auto undrawn-facility and prepayment-freeze haircuts, and presets (Base / Mild −10%/+100bp/3mo / Severe −25%/+250bp/6mo / Crisis −40%/+600bp/12mo with the window closed). Slider state is stored in the URL hash (`#sc?hair=25&shock=250&delay=6`). Outcomes — P&L, funding gap, implied rating buckets with hard caps, distress flags, delay penalties, contagion by instrument-to-holder proxy, and a live 'What happens' narrative — recompute through `engine.js`. Construction-phase landlords use project-funded runway vs months to energisation instead of interest-cover flags. Market caps are not in the dataset, so dilution % and the solvency test are n/a. Headline (Base) scores and runways are unchanged.
+- Header sliders stay in sync with the Scenario tab (same engine). A Listen button on each tab plays a pre-rendered narration (`audio/*.mp3`); one clip at a time, no autoplay, pause on tab change.
 - Score vs market-spread bubble chart (size = debt, colour = tier, click opens the drawer); interactive maturity wall (all / tier / single company, dashed liquidity line).
 - Deep-dive drawer per company: live metrics, debt-stack donut, maturity ladder, counterparty concentration, backstop badges, prepayment dependency, pro-forma items, EDGAR links, all sourced facts.
 - Compare mode: tick 2-3 scored companies on the Companies tab → radar of score components + metric diff.
