@@ -9,71 +9,80 @@ SGT = dt.timezone(dt.timedelta(hours=8))
 now = dt.datetime.now(SGT)
 
 def r1(x): return None if x is None else round(x, 1)
+from model import M, PRIV_TIER, OLD, UST5
+import subprocess
 
-# ---------- credit math ----------
-def metrics(c):
-    i = c.get("inp")
-    if not i: return dict(debt=(c.get("debt_override") or 0)/1000 or None, lev=None, cov=None, ecx=None, runway=None, burn=None, liq=None, nd=None, ebitda=None)
-    e = i["ebitda_q"]*4 if i.get("ebitda_q") is not None else i["ttm_ebitda"]
-    eq = i["ebitda_q"] if i.get("ebitda_q") is not None else e/4
-    intr = i["ttm_int"] if i.get("ttm_int") else i["int_q"]*4
-    nd = i["debt"] - i["cash_nd"]
-    if "offbs" in i: nd_lev = nd + i["offbs"]
-    else: nd_lev = nd
-    lev = nd_lev/e if e > 0 else None
-    cov = e/intr if intr else None
-    ecx = (eq - i["capex_q"])/i["int_q"] if i.get("capex_q") is not None else None
-    burn = (i["capex_q"] - i["ocf_q"])/3
-    liq = i["cash_u"] + i["undrawn"]
-    run = liq/burn if burn > 0 else None
-    return dict(debt=i["debt"]/1000, lev=r1(lev), cov=None if cov is None else round(cov,2), ecx=r1(ecx), runway=r1(run),
-                burn=round(burn), liq=round(liq), nd=round(nd), ebitda=round(e), cash_u=i["cash_u"], undrawn=i["undrawn"])
-
-def pts_L(l, e):
-    if l is None or e is None or e <= 0: return 0
-    return 30 if l <= 3 else 22 if l <= 5 else 14 if l <= 8 else 7 if l <= 12 else 0
-def pts_C(c): return 0 if c is None else 25 if c >= 5 else 18 if c >= 3 else 12 if c >= 2 else 6 if c >= 1 else 0
-def pts_R(r): return 0 if r is None else 20 if r >= 24 else 14 if r >= 12 else 8 if r >= 6 else 3
+# ---------- credit math: one engine (../engine.js) for browser, export and this build ----------
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def run_engine(cos, settings_list):
+    js = ("const E=require(%r);const cos=JSON.parse(process.argv[1]);const ss=JSON.parse(process.argv[2]);"
+          "console.log(JSON.stringify(ss.map(st=>Object.fromEntries(cos.map(c=>[c.id,E.calc(c,st)])))))") % os.path.join(ROOT, "engine.js")
+    out = subprocess.run(["node", "-e", js, json.dumps(cos), json.dumps(settings_list)], capture_output=True, text=True, check=True).stdout
+    return json.loads(out)
 
 companies = []
 for c in PUB:
-    m = metrics(c)
-    d = {k: v for k, v in c.items() if k not in ("inp",)}
-    d.update(m)
-    if c.get("inp"):
-        L, C, R = pts_L(m["lev"], m["ebitda"]), pts_C(m["cov"]), pts_R(m["runway"])
-        d["score"] = L + C + R + c["Q"] + c["A"]
-        d["scoreNote"] = f"Leverage {L} + Coverage {C} + Runway {R} + Counterparty {c['Q']} + Rating {c['A']} = {d['score']}"
-    else:
-        d["score"] = None; d["scoreNote"] = "n/a - " + c["scoreNA"]
-    if c.get("debt_override"): d["debt"] = c["debt_override"]/1000
+    d = {k: v for k, v in c.items() if k not in ("inp", "A")}
+    m = M.get(c["id"], {})
+    d.update({k: v for k, v in m.items()})
+    if d.get("inp"): d["inp"] = dict(d["inp"])
+    d["debt"] = (c["debt_override"] if c.get("debt_override") else (c["inp"]["debt"] if c.get("inp") else 0))/1000 or None
+    if not d.get("inp"): d["scoreNote"] = "n/a - " + c["scoreNA"]
+    d["oldScore"] = OLD.get(c["id"])
     companies.append(d)
 for c in PRIV:
-    d = dict(c); d.update(verified="Private - no filings", filing=None, debt=(c.get("debtNum") or 0)/1000 or None,
-                      lev=None, cov=None, ecx=None, runway=None, score=None, scoreNote="n/a - private; figures are News/Mgmt, lower confidence",
-                      potrev="n/a", capMW=None, capMWPlan=None, wall=None)
+    t = PRIV_TIER.get(c["id"], ("GPU Neocloud", "Depreciating silicon"))
+    d = dict(c); d.update(verified="Private - no filings", filing=None, debt=(c.get("debtNum") or 0)/1000 or None, inp=None, tier=t[0], coll=t[1],
+                      scoreNote="n/a - private; figures are News/Mgmt, lower confidence", potrev="n/a", capMW=None, capMWPlan=None, wall=None)
     companies.append(d)
 
-# ---------- aggregates (Calc) ----------
+scored = [c for c in companies if c.get("inp")]
+BASE, PF, PROJ, LEASE = run_engine(scored, [{}, {"fin": "pf"}, {"basis": "proj"}, {"debt": "lease"}])
+for c in scored:
+    b = BASE[c["id"]]
+    c["base"] = {k: (round(v, 2) if isinstance(v, float) else v) for k, v in b.items()}
+    c["score"] = b["score"]; c["scoreNote"] = b["note"]
+    c["scorePF"] = PF[c["id"]]["score"]
+
+# ---------- aggregates (Calc, strict quarter-end, corporate basis) ----------
 core = [c for c in companies if c["id"] in ("crwv","nbis","iren","apld","cifr","wulf","glxy","corz","hut","nscl","wyfi")]
 agg = dict(
-  coreDebt=round(sum(c["debt"] for c in core), 1),
+  coreDebt=round(sum(c["debt"] or 0 for c in core), 1),
   coreBacklog=round(sum(c["backlog"] for c in core if c["backlog"]), 1),
   coreN=len(core),
-  scored=len([c for c in companies if c["score"] is not None]),
-  runwayU6=[c["name"] for c in companies if c["runway"] is not None and c["runway"] < 6],
+  scored=len(scored),
+  runwayU6=[c["name"] for c in scored if BASE[c["id"]]["run"] is not None and BASE[c["id"]]["run"] < 6],
   verifiedYes=[c["name"] for c in companies if str(c["verified"]).startswith("Yes")],
+  ust5=UST5,
 )
-walls = {c["id"]: c["wall"] for c in companies if c.get("wall")}
-dev = [0]*6
-for k, w in walls.items():
-    if k not in ("crwv", "nbis"):
-        dev = [a+b for a, b in zip(dev, w)]
-agg["wallSeries"] = [dict(name="CoreWeave", values=walls["crwv"]), dict(name="Nebius", values=walls["nbis"]),
-                     dict(name="Developers (IREN, APLD, CIFR, WULF, HUT, CORZ, GLXY, WYFI)", values=[round(x,2) for x in dev])]
+levs = sorted(BASE[k]["lev"] for k in ("crwv","nbis","iren","apld","corz","hut") if BASE[k]["lev"])
+agg["levRange"] = [round(levs[0], 1), round(levs[-1], 1)]
+
+# ---------- score changelog (old 10-pt rating bucket, mixed cash basis -> new A5+M5, unrestricted cash, strict quarter-end) ----------
+WHY = {
+ "crwv": "Rating bucket 3 → agency 1 (B band) + market 0 (median spread 1,051bp); undrawn $5.7bn Reported (was ~$5bn Mgmt)",
+ "nbis": "Rating 0 → agency 0 + market 3 (fallback: MUFG 7.60% − UST5); Citi $3.5bn moved to pro-forma; restricted cash excluded (already)",
+ "orcl": "Rating 8 → agency 4 (BBB band) + market 3 (318bp); Nov raises only on pro-forma",
+ "iren": "Rating 0 → agency 0 + market 1 (fallback: GPU Financing 3.0 10.38%)",
+ "apld": "Counterparty 15 → 10 (CoreWeave anchors Polaris Forge 1); rating 3 → agency 1 + market 2 (352bp)",
+ "cifr": "Rating 3 → agency 1 (project notes) + market 4 (239bp); restricted $2.2bn excluded in headline; Oct converts pro-forma only",
+ "wulf": "Rating 3 → agency 1 (project notes) + market 4 (210bp); $400m revolver → ~$1m usable at quarter-end (cap $75m less $74m LCs)",
+ "hut":  "Rating 10 → agency 3 (BBB-/Baa2 on project notes: 4 − 1 for project level) + market 4 (fallback FalconX 7%); restricted cash and investments ($6.39bn) no longer netted",
+ "corz": "Rating 3 → agency 1 + market 2 (437bp)",
+ "wyfi": "Rating 0 → agency 0 + market 1 (fallback: NC-1 margin SOFR + 6.00% ≈ 600bp); $70m Oct DDTL advance only on pro-forma",
+ "spcx": "Rating 9 → agency 4 + market 4 (fallback: top coupon 6.65% − UST5 4.83% = 182bp); xAI 12.5% notes repaid (Mar 2026)",
+}
+changelog = []
+for c in scored:
+    changelog.append(dict(id=c["id"], name=c["name"], old=OLD.get(c["id"]), new=c["score"], pf=c["scorePF"],
+                          delta=None if OLD.get(c["id"]) is None else c["score"] - OLD[c["id"]], why=WHY.get(c["id"], ""), note=c["scoreNote"]))
 
 cost = [  # coupon/effective (Reported) or market yield (News)
- dict(label="CoreWeave 9.75% 2031 (market yield)", value=16.0, display="~16%", tag="News", src=["cnbcCds"]),
+ dict(label="CoreWeave 9.75% 2031 (market yield, 19 Nov)", value=15.64, display="15.64%", tag="News", src=["aiTracker"]),
+ dict(label="Galaxy Helios 2031 (market yield, 19 Nov)", value=12.24, display="12.24%", tag="News", src=["aiTracker"]),
+ dict(label="Core Scientific 2031 (market yield, 19 Nov)", value=9.21, display="9.21%", tag="News", src=["aiTracker"]),
+ dict(label="Oracle 6.85% 2066 (market yield, 19 Nov)", value=8.87, display="8.87%", tag="News", src=["aiTracker"]),
+ dict(label="Applied Digital 2031 (market yield, 19 Nov)", value=8.85, display="8.85%", tag="News", src=["aiTracker"]),
  dict(label="IREN GPU Financing 2.0 (effective)", value=10.70, display="10.70%", tag="Reported", src=["irenQ"]),
  dict(label="Galaxy Helios II 9.875% 2031", value=9.875, display="9.88%", tag="Reported", src=["glxyQ"]),
  dict(label="Sharon AI GPU facility B (comp)", value=9.95, display="9.95%", tag="Reported", src=["shaz"]),
@@ -94,7 +103,7 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 # ---------- What's new (rolling 7 days) ----------
 news = [
  dict(date="2026-11-20", co="SPCX", tag="News", h="Apollo and Goldman price ~$44bn of senior and subordinated notes for SpaceX's Saturn GPU lease vehicle - 'largest GPU financing to date'",
-      d="Oversubscribed and upsized; anchors BlackRock, Goldman Sachs Asset Management and KKR-advised accounts. Funds Nvidia Vera Rubin GPUs; lease schedules start on delivery in H1 2027. Off SpaceX's balance sheet.", src=["rtSaturn"]),
+      d="Oversubscribed and upsized; anchors BlackRock, Goldman Sachs Asset Management and KKR-advised accounts. Funds Nvidia Vera Rubin GPUs; lease schedules start on delivery in H1 2027. SpaceX's own 8-K (26 Oct) sizes the Apollo master finance lease at ~$40bn; a finance lease comes on balance sheet at commencement.", src=["rtSaturn","spcx8kLease"]),
  dict(date="2026-11-20", co="ORCL", tag="Mgmt", h="Oracle says its OpenAI contract is fully funded, including vendor financing",
       d="Targets positive FCF in 2H FY28 and >$30bn FCF in FY29. Follows the 4 Nov $10bn notes (7.000%-8.650%) and 86.2m-share equity offering (8-K).", src=["orclStmt","orcl8k"]),
  dict(date="2026-11-20", co="CRWV", tag="News", h="CoreWeave falls 12% to $39.46, below its $40 IPO price; Huang Foundation's $350m CoreWeave compute commitment revives circular-financing concerns",
@@ -103,6 +112,10 @@ news = [
       d="Key end-customer for Fluidstack (TeraWulf, Cipher, Hut 8 sites), Nscale (up to $44.6bn) and Lambda. Lambda's ~$34.9bn agreement remains terminable by either party; neither had given notice as of the 18 Nov prospectus.", src=["antIpo","jaLambda"]),
  dict(date="2026-11-18", co="CRWV / ORCL", tag="News", h="CoreWeave 5-yr CDS 1,100-1,200bp and 2031s near 16%; Oracle CDS above 300bp; first AI-CDS ETFs filed",
       d="Tuttle Capital and Defiance filed for ETFs that gain when CoreWeave/Oracle CDS widen. Co-founder Venturo disclosed buying $30m of CoreWeave 2031 unsecured bonds.", src=["cnbcCds","invCrwv"]),
+ dict(date="2026-11-17", co="Grid", tag="News", h="Utility Dive: ~191 GW of planned data-centre capacity faces new risk as the build-out slows (Orennia)",
+      d="Utilities plan ~$1.3tn of capex in 2026-30 (S&P RRA); Rystad's risked view sees pauses delaying ~1-3 GW, more than 10 GW if sustained.", src=["udive","spUtil","rystad"]),
+ dict(date="2026-11-16", co="Macro", tag="News", h="Fed Governor Barr: AI investment is increasingly debt-funded and it is hard to know where the risk sits",
+      d="Hyperscalers and GPU makers have made >$100bn of equity investments in model labs and cloud start-ups that are also their customers. Follows the 13 Nov Financial Stability Report: >$3tn of off-balance-sheet obligations at seven firms.", src=["barr","fedFsr"]),
  dict(date="2026-11-18", co="Nvidia", tag="News", h="Nvidia narrows its neocloud support: commitments cut to $32bn (from $36bn), effective only once financing is secured and capacity is deployed",
       d="Interim CEO Kress: guarantees start when projects are financed and would not survive construction delays. Morgan Stanley cut its deployment assumption to 4 GW from 5 GW.", src=["cnbcNvda","tcNvda"]),
  dict(date="2026-11-18", co="Macro", tag="News", h="Fed Governor Waller: a half-point hike may be needed at the December meeting",
@@ -165,11 +178,11 @@ sim = [
  dict(f="Collateral that loses value vs longer debt and contract terms", w=15, s=70, side="Similar",
       why="GPUs: ECB cites a 1-3 year economic life vs 6-year accounting lives at hyperscalers; Nebius lengthened server lives to 5 years; contracts run ~5-6 years (Nscale ~5.7-yr weighted average; Saturn 5-yr lease). Houses lost value in 2007-09 but were not obsolete.", src=["ecb","nbisFs","nsclS1","rtSaturn"]),
  dict(f="Leverage and funding gap", w=15, s=55, side="Partly similar",
-      why=f"Neocloud net leverage 4.6-16x; {len(agg['runwayU6'])} of {agg['scored']} scored names have under 6 months of runway on unrestricted cash. 2008 investment banks ran as high as 40:1 with overnight funding; hyperscalers are far less levered.", src=["fcic","crwvQ"]),
+      why=f"Net leverage ~4.8x at CoreWeave and Nebius (Nebius ~16x on recurring EBITDA), >14x at Applied Digital, IREN and Hut 8; {len(agg['runwayU6'])} of {agg['scored']} scored names have under 6 months of runway on unrestricted cash. 2008 investment banks ran as high as 40:1 with overnight funding; hyperscalers are far less levered.", src=["fcic","crwvQ"]),
  dict(f="Circular financing (supplier funds customer funds supplier)", w=15, s=65, side="Similar",
       why="Nvidia: CoreWeave equity + $6.3bn capacity backstop, Nebius warrants, Nscale $2bn, $32bn contingent neocloud commitments, $118bn guarantees incl. up to $105bn residual-value support for OpenAI's Ohio campus; Huang Foundation buys CoreWeave compute; OpenAI and Anthropic are end customers behind Oracle, CoreWeave, Lambda, Nscale backlogs. ECB flags mutual commitments inflating reported demand.", src=["crwvNv","nbisFs","axiosNscl","cnbcNvda","nvda8k","cnbcNvdaQ3","yhHuang","ecb"]),
  dict(f="Off-balance-sheet vehicles", w=15, s=75, side="Similar",
-      why="Meta Hyperion: $27.3bn A+ bonds, Meta 20% / Blue Owl 80%, not consolidated; Broadcom-Anthropic $63bn SPV (Broadcom residual support up to ~$43bn); SpaceX Saturn ~$44bn; Oracle $288bn of uncommenced leases off balance sheet; $75-100bn SPV bonds/ABS in 2026; ECB: big-tech off-balance-sheet commitments >$4tn. Echoes SIVs/conduits.", src=["spHyp","avgo8k","avgoPr","rtSaturn","orclQ","bis140","ecb"]),
+      why="Meta Hyperion: $27.3bn A+ bonds, Meta 20% / Blue Owl 80%, not consolidated; Broadcom-Anthropic $63bn SPV (Broadcom residual support up to ~$43bn); SpaceX ~$40bn GPU finance lease (8-K; on balance sheet only from commencement in 2027); Oracle $288bn of uncommenced leases off balance sheet; Fed: >$3tn of off-balance-sheet obligations at seven firms; $75-100bn SPV bonds/ABS in 2026; ECB: big-tech off-balance-sheet commitments >$4tn. Echoes SIVs/conduits.", src=["spHyp","avgo8k","avgoPr","spcx8kLease","orclQ","fedFsr","bis140","ecb"]),
  dict(f="Bond yields and CDS flashing stress", w=10, s=60, side="Similar",
       why="CoreWeave CDS 1,100-1,200bp, 2031s ~16%; Oracle CDS >300bp from <80; CDS ETFs filed. Comparable to early-2007 subprime ABX warnings; not yet a broad funding freeze.", src=["cnbcCds"]),
  dict(f="Who holds the risk", w=10, s=25, side="Different",
@@ -199,13 +212,15 @@ verdict = dict(
   dict(k="OpenAI funding", v="~$11bn of up to ~$20bn closed at $1.25tn valuation (6 Nov 2026)", src=["bbgOai"]),
   dict(k="Refinancing / maturity walls", v="CoreWeave $11.0bn due 2027; set-wide wall clusters in 2030-31", src=["crwvQ"]),
   dict(k="Nvidia support", v="Neocloud commitments $32bn (down from $36bn), contingent on financing and deployment; total guarantees $118bn incl. $105bn OpenAI Ohio", src=["cnbcNvda","cnbcNvdaQ3"]),
-  dict(k="Off-balance-sheet build-up", v=">$4tn big-tech commitments (Q2 2026); $75-100bn SPV bonds/ABS in 2026", src=["ecb","bis140"]),
+  dict(k="Off-balance-sheet build-up", v="Fed: >$3tn at seven firms (>$1tn uncommenced leases + >$2tn take-or-pay and residual-value guarantees, undiscounted); ECB: >$4tn big-tech commitments (Q2 2026); $75-100bn SPV bonds/ABS in 2026", src=["fedFsr","ecb","bis140"]),
  ])
 macro = [
  dict(k="Morgan Stanley", v="~$2.9tn data-centre capex to 2028; $1.5tn external financing gap; ~$800bn from private credit", d="16 Jul 2025", src=["ms"]),
  dict(k="JPMorgan", v="~$1.5tn of AI/DC funding from IG bonds over five years; ~$1.2tn AI-company debt (cited by Chicago Fed)", d="10 Nov 2025 / Feb 2026", src=["jpmBbg","chiFed"]),
  dict(k="Moody's", v="At least $3tn data-centre investment through 2030; hyperscaler DC lease commitments $1.2tn by mid-2026 ($820bn not yet started)", d="12 Jan 2026 / Oct 2026", src=["moodysBbg","bis140"]),
  dict(k="BIS", v="Top-5 hyperscaler bonds $222bn in 2026 to Sep (>10% of long-term UST issuance); $75-100bn SPV bonds/ABS", d="27 Oct 2026", src=["bis140"]),
+ dict(k="Federal Reserve", v="Advanced-computing firms issued >$680bn of debt in 2026 to October (~31% of nonfinancial IG issuance); public debt outstanding >$1.1tn; off-balance-sheet obligations >$3tn", d="13 Nov 2026", src=["fedFsr"]),
+ dict(k="Goldman Sachs", v="Hyperscaler gross debt issuance ~$420bn in 2027, 65-75% expected in USD IG", d="22 Sep 2026", src=["rtGs"]),
  dict(k="ECB", v="Big-tech off-balance-sheet commitments >$4tn (Q2 2026); most US hyperscalers FCF-negative in 2026", d="Nov 2026", src=["ecb"]),
 ]
 
@@ -229,14 +244,75 @@ claims = [
  dict(c="AI debt 4.3% of GDP vs subprime 9.0%", st="Corrected", v=f"{sp[2]['pct']}% (JPMorgan ~$1.2tn ÷ Q3 2026 GDP $33.0tn) vs {sp[1]['pct']}% (subprime ~$1.2tn ÷ 2007 GDP $14.47tn). Using the $1.4tn informal tally would give ~4.2%; 9.0% would need ~$1.3tn of subprime", src=["chiFed","fredQ3","gorton","fredGdpa"]),
 ]
 
+
+# ---------- second-AI audit (22 Nov 2026): every number treated as a claim ----------
+audit = [
+ dict(g="Data / formula", c="Net debt mixes cash bases; Hut 8 net debt $1,175m should be ~$7,569.5m", st="Confirmed", v="Old build netted Hut 8's $6.39bn restricted cash and investments. All companies now use unrestricted cash; Hut 8 net debt = $7,726.4m − $156.9m = $7,569.5m · Calc", src=["hutQ"]),
+ dict(g="Data / formula", c="Post-quarter financing applied asymmetrically (Nebius, TeraWulf in; Oracle, Cipher out)", st="Confirmed", v="Headline is now strict quarter-end; a pro-forma toggle adds all raises. Nebius Citi $3.5bn (6-K 22 Oct) and Cipher $850m 0% 2032 converts (16 Oct, 10-Q subsequent events) confirmed", src=["nbis6kCiti","cifrQ"]),
+ dict(g="Data / formula", c="TeraWulf $400m revolver adds liquidity", st="Corrected", v="At 30 Sep borrowings + LCs were capped at $75m before first lease commencement with $74.0m of LCs out (~$1m usable). The Oct amendment raised commitments to $400m but the pre-commencement cap only to $150m (~$76m usable, pro-forma)", src=["wulfQ","wulf8kRev"]),
+ dict(g="Data / formula", c="Oracle Nov 2026 '$10B notes/equity'", st="Corrected", v="$10.0bn of notes (7.000-8.650%) and, separately, $10.0bn of common stock (86.2m shares): $20bn gross. Pro-forma adds +$20bn cash, +$10bn debt", src=["orcl8k"]),
+ dict(g="Data / formula", c="Nebius $980.8m revenue includes $325.1m one-off; run-rate EBITDA $1,863m overstated", st="Confirmed", v="Filing: $325.1m 'revenue from strategic partnerships', recognised at a point in time. Recurring view: ($465.8m − $325.1m) × 4 = $563m; leverage ~16x vs 4.9x · Calc", src=["nbisFs"]),
+ dict(g="Data / formula", c="Applied Digital debt shown as $6.7216000000000005bn", st="Confirmed (bug)", v="Floating-point display bug; all numbers now go through one formatter ($6.72bn)", src=["apldQ"]),
+ dict(g="Rubric", c="Oracle: $43.8bn on-balance-sheet leases and $288bn uncommenced", st="Confirmed", v="Operating lease liabilities $34,621m + finance $9,185m = $43,806m; $288bn of leases not yet commenced (10-Q). Lease-adjusted view added", src=["orclQ"]),
+ dict(g="Rubric", c="S&P sees Oracle lease-adjusted leverage in the mid-4x range", st="Confirmed", v="S&P (Jul 2026): mid-4x in FY27 after adding $260bn of leases and $13bn of power obligations; downgrade risk if >4.5x · News", src=["ppcSP"]),
+ dict(g="Rubric", c="Oracle BBB-/Baa2 negative; CDS >300bp", st="Confirmed", v="Moody's affirmed Baa2, outlook negative, 2 Nov 2026; S&P BBB-; CDS above 300bp (18 Nov) · News", src=["moodysOrcl","ppcSP","cnbcCds"]),
+ dict(g="Rubric", c="Applied Digital counterparty 15/15 despite CoreWeave anchoring Polaris Forge 1 (400 MW)", st="Confirmed", v="CoreWeave leases 400 MW of ~1.41 GW at Polaris Forge 1 (10-Q). Counterparty cut to 10/15", src=["apldQ"]),
+ dict(g="Rubric", c="Hut 8 gets 10/10 rating on project notes with 0.31x coverage; CoreWeave 3/10 at ~16% yields and >1,100bp CDS", st="Confirmed", v="Hut 8 BBB-/Baa2 notes are project-level; corporate EBITDA/interest 0.31x · Calc. CoreWeave 2031s 15.64% (19 Nov) and CDS 1,100-1,200bp · News. Bucket now 5 agency + 5 market", src=["hutQ","aiTracker","cnbcCds"]),
+ dict(g="Addition", c="24M maturity coverage: CoreWeave 0.68x vs TeraWulf 9.0x", st="Corrected", v="CoreWeave 0.73x using the Reported $5.7bn undrawn ((4,122 + 5,700) ÷ 13,400); TeraWulf 7.2x strict ((1,602 + 1) ÷ 224), 7.5x pro-forma; 9.0x only if the full $400m revolver were usable · Calc", src=["crwvQ","wulfQ","wulf8kRev"]),
+ dict(g="Addition", c="Cipher 1.5 months corporate runway vs $2.2bn ring-fenced project cash", st="Confirmed", v="Restricted cash $2,196.6m (10-Q). Runway ~1.5 months corporate vs ~5.4 project-funded · Calc", src=["cifrQ"]),
+ dict(g="Addition", c="CoreWeave ~$9bn prepayments vs ~$11.8bn unpaid PP&E", st="Confirmed", v="~$9bn prepayments/deposits expected in the next 3 months · Mgmt (call 10 Nov); $11.8bn unpaid PP&E liabilities · Reported", src=["foolCrwv","crwvQ"]),
+ dict(g="Addition", c="Nebius prepayments ~$10bn (2026) and $17-20bn (2027)", st="Confirmed", v="Q3 call · Mgmt", src=["foolNbis"]),
+ dict(g="Addition", c="CoreWeave undrawn liquidity ~$5bn", st="Corrected", v="$5.7bn undrawn under the revolver, DDTL 4.0 and DDTL 5.5 · Reported (10-Q); '~$5bn' was the call's DDTL-only figure", src=["crwvQ","foolCrwv"]),
+ dict(g="Systemic", c="Fed: >$3tn off-balance-sheet AI obligations", st="Confirmed", v="Fed FSR (13 Nov 2026) Box 2.2: >$1tn not-yet-commenced leases + >$2tn take-or-pay and residual-value guarantees at seven firms; undiscounted", src=["fedFsr"]),
+ dict(g="Systemic", c="Meta Hyperion $27bn at ~90% LTV", st="Confirmed", v="$27.3bn of notes (S&P) vs ~$30bn asset → ~90% (Van Nieuwerburgh, Brookings); vs S&P's $28.8bn committed cost ~95% · Calc", src=["spHyp","brook"]),
+ dict(g="Systemic", c="Broadcom $63bn SPV; Nvidia $32bn + $105bn+ backstops", st="Confirmed", v="Broadcom 8-K: $63bn SPV, residual support up to ~$43bn. Nvidia: $32bn neocloud commitments; $118bn guarantees incl. up to $105bn for OpenAI Ohio", src=["avgo8k","avgoPr","cnbcNvda","cnbcNvdaQ3","nvda8k"]),
+ dict(g="Systemic", c="~$1.4tn AI debt stack, ~50% banks / ~50% private credit", st="Unverifiable", v="An informal tally quoted at a Brookings event (8 Oct 2026), not a measured estimate. The Fed instead reports >$1.1tn of public advanced-computing debt held mainly by mutual funds, pensions and insurers; large-bank AI C&I ~$150bn outstanding (Chicago Fed). Not used", src=["brook","fedFsr","chiFed"]),
+ dict(g="Systemic", c="$50-59bn of AI ABS/CMBS", st="Unverifiable", v="Not found in a readable dated source (the CREFC deck has no text layer). BIS puts SPV-linked bonds/ABS at $75-100bn in 2026. Not used", src=["bis140"]),
+ dict(g="Systemic", c="Untraceable holders / opacity gap", st="Confirmed (qualitative)", v="Fed: private-credit and SPV structures make the debt hard to measure; Barr (16 Nov): hard to know where the risk resides. No number to verify", src=["fedFsr","barr"]),
+ dict(g="Macro", c="$420bn hyperscaler issuance in 2027", st="Confirmed", v="Goldman Sachs forecast of gross hyperscaler debt issuance, 65-75% in USD IG (Reuters, 22 Sep 2026) · News", src=["rtGs"]),
+ dict(g="Macro", c="US utility capex ~$1.3tn in 2026-30", st="Confirmed", v="S&P RRA: $1.295tn across 46 utilities (23 Apr 2026) · News", src=["spUtil"]),
+ dict(g="Macro", c="191 GW of data-centre capacity at siting risk after the midterms", st="Confirmed", v="Orennia via Utility Dive (17 Nov 2026): ~191 GW of planned capacity faces new risk. Rystad's risked view: delays of ~1-3 GW (>10 GW if sustained) · News", src=["udive","rystad"]),
+ dict(g="Macro", c="GAAP depreciation 5-6 years vs 3-4 year economic GPU life", st="Corrected", v="Nebius extended server lives from 4 to 5 years in 2026 · Reported; ECB cites 6-year accounting lives vs 1-3 year economic life · News. The '3-4 year' figure has no dated source", src=["nbisFs","ecb"]),
+ dict(g="Prior pack", c="SpaceX xAI 12.5% notes outstanding", st="Corrected", v="Repaid 5 Mar 2026 (10-Q)", src=["spcxQ"]),
+ dict(g="Prior pack", c="Saturn ~$44bn", st="Corrected (filing wins)", v="SpaceX 8-K (26 Oct): ~$40bn Apollo master finance lease; $44bn is Reuters' 20 Nov deal size · News", src=["spcx8kLease","rtSaturn"]),
+]
+
+# ---------- systemic (inside the AI vs 2008 tab) ----------
+obs = [
+ dict(k="Seven large AI firms (Fed)", v=">$3tn", d=">$1tn not-yet-commenced leases + >$2tn take-or-pay and residual-value guarantees; undiscounted", tag="News (Fed FSR)", src=["fedFsr"]),
+ dict(k="Oracle uncommenced leases", v="$288bn", d="Data centres; commence Q2 FY27-FY29; 15-19 year terms", tag="Reported", src=["orclQ"]),
+ dict(k="Nvidia guarantees", v="$118bn", d="Incl. up to $105bn residual-value guaranties for OpenAI Ohio; plus $32bn contingent neocloud capacity commitments", tag="Reported / News", src=["nvda8k","cnbcNvdaQ3","cnbcNvda"]),
+ dict(k="Broadcom-Anthropic SPV", v="$63bn", d="Broadcom residual-value support up to ~$43bn", tag="Reported", src=["avgo8k","avgoPr"]),
+ dict(k="SpaceX GPU finance lease", v="~$40bn", d="Apollo-managed; commences H1 2027", tag="Reported", src=["spcx8kLease"]),
+ dict(k="Meta Hyperion (Beignet)", v="$27.3bn", d="Notes on a ~$30bn asset (~90% LTV · Calc); Meta 20% / Blue Owl 80%; 16-year residual-value guarantee", tag="News", src=["spHyp","metaHyp","brook"]),
+]
+holders = [
+ dict(k="Public debt of advanced-computing firms", v=">$1.1tn outstanding; >$680bn issued in 2026 to Oct", d="Held mainly by mutual funds, pensions and insurers (Fed)", tag="News (Fed FSR)", src=["fedFsr"]),
+ dict(k="Large-bank AI-adjacent C&I", v="~$450bn commitments / ~$150bn drawn", d="Late 2025", tag="News (Chicago Fed)", src=["chiFed"]),
+ dict(k="SPV bonds / ABS", v="$75-100bn in 2026", d="BIS Bulletin 140", tag="News", src=["bis140"]),
+ dict(k="Private credit (forecast)", v="~$800bn of a $1.5tn gap to 2028", d="Morgan Stanley, Jul 2025", tag="News", src=["ms"]),
+ dict(k="2027 hyperscaler issuance (forecast)", v="~$420bn gross", d="65-75% in USD IG (Goldman)", tag="News", src=["rtGs"]),
+ dict(k="Market price of AI credit", v="Median AI spread 437bp vs JNK 248bp", d="19 Nov 2026 prices", tag="News", src=["aiTracker"]),
+ dict(k="'~$1.4tn, half with banks'", v="n/a", d="Informal tally at a Brookings event - not a measured estimate; not used", tag="Unverifiable", src=["brook"]),
+]
+grid = [
+ dict(k="US utility capex 2026-30", v="~$1.3tn", d="S&P RRA $1.295tn across 46 utilities", tag="News", src=["spUtil"]),
+ dict(k="Planned DC capacity facing new siting risk", v="~191 GW", d="Orennia via Utility Dive; Rystad risked delay ~1-3 GW (>10 GW if sustained)", tag="News", src=["udive","rystad"]),
+ dict(k="Rates", v="+50bp floated for Dec FOMC", d="Waller, 18 Nov; use the refinancing-shock slider to see the hit to coverage", tag="News", src=["cnbcWaller"]),
+ dict(k="GPU useful lives", v="5-6 yr accounting vs 1-3 yr economic", d="Nebius 4→5 yr (Reported); ECB on hyperscalers (News)", tag="Reported / News", src=["nbisFs","ecb"]),
+]
+
 discrepancies = [
- dict(t="Runway definition changed", d="Runway now uses unrestricted cash + committed undrawn facilities. Hut 8 falls from 68 to ~11 months; Cipher to ~1.5 months; CoreWeave 4.6 → 3.7; Applied Digital 6.0 → 4.9; Core Scientific 10.3 → 5.1; IREN 16.7 → 12.5; TeraWulf 9.4 → 6.8.", s="Method", src=["hutQ","cifrQ","crwvQ"]),
- dict(t="Oracle debt after the 10-Q", d="Oracle issued $10bn notes and 86.2m shares on 4 Nov 2026 (8-K), after the 31 Aug 10-Q. Leverage and runway still use 10-Q balances.", s="Newer filing", src=["orcl8k"]),
- dict(t="Saturn notes", d="Handoff described tranche 'A3' as if it were a rating; A3 is the tranche class (maturing Apr 2033). Deal priced at ~$44bn on 20 Nov (Reuters).", s="Corrected", src=["rtSaturn","handoff"]),
+ dict(t="Net debt and runway: one cash definition", d="Headline net debt and runway use unrestricted cash for every company; restricted / ring-fenced cash appears only on the project-funded basis. Hut 8 net debt $1,175m → $7,569.5m (the old figure netted $6.39bn of restricted cash and investments); Hut 8 runway 68 → ~11 months (68 on the project basis); Cipher ~1.5 months (5.4 project basis).", s="Method (audit)", src=["hutQ","cifrQ"]),
+ dict(t="Post-quarter financing: strict vs pro-forma", d="Headline = strict quarter-end balances. The pro-forma toggle adds all post-quarter raises symmetrically: Nebius Citi $3.5bn, TeraWulf revolver (~$76m usable), Oracle $10bn notes + $10bn equity, Cipher $850m converts (less $165.9m exchanged), IREN ~$630m ATM, WhiteFiber $70m DDTL advance. Earlier versions counted Nebius' and TeraWulf's facilities but not Oracle's or Cipher's raises.", s="Method (audit)", src=["nbis6kCiti","wulf8kRev","orcl8k","cifrQ","irenQ","wyfi8k"]),
+ dict(t="Rating bucket replaced", d="The 10-point agency bucket is now 5 points agency + 5 points market-implied cost (bond spread or, where no bonds trade, highest-rate borrowing − UST5). Hut 8 drops from 10 rating points to 7; CoreWeave from 3 to 1.", s="Method (audit)", src=["aiTracker","hutQ"]),
+ dict(t="SpaceX xAI notes", d="Earlier pack listed xAI 12.5% notes; the 10-Q says they were repaid on 5 Mar 2026.", s="Corrected", src=["spcxQ"]),
+ dict(t="Oracle debt after the 10-Q", d="Oracle issued $10bn notes and $10bn of common stock (86.2m shares) in early Nov 2026 (8-K), after the 31 Aug 10-Q. Headline uses 10-Q balances; the pro-forma toggle adds both.", s="Newer filing", src=["orcl8k"]),
+ dict(t="Saturn size: filing vs news", d="SpaceX's 8-K (26 Oct) describes an Apollo-managed master finance lease of ~$40bn aggregate principal; Reuters reported a ~$44bn deal on 20 Nov. Filing figure used. A3 is a tranche class (Apr 2033), not a rating. Not in headline leverage until the lease commences (H1 2027).", s="Filing used", src=["spcx8kLease","rtSaturn","handoff"]),
  dict(t="IREN backlog vs RPO", d="Management's $20.3bn backlog vs $6.3bn RPO in XBRL; backlog includes lease contracts that RPO excludes.", s="Definition", src=["irenQ","irenPr"]),
  dict(t="Core Scientific capex", d="Q3 capex $985.1m in the results release (incl. land) vs $541m PP&E purchases in the 10-Q cash-flow statement. Filing figure used.", s="Filing used", src=["corzQ"]),
  dict(t="CoreWeave cash & backlog", d="$6.5bn cash on the call (incl. securities) vs $6.4bn incl. restricted / $4.1bn unrestricted in the 10-Q; $132.5bn backlog vs $132.3bn RPO.", s="Minor", src=["crwvQ","crwvPr"]),
- dict(t="Nebius EBITDA quality", d="Q3 adj. EBITDA includes $325.1m of non-recurring revenue; excluding it, leverage is ~16x rather than 4.9x.", s="Quality", src=["nbisFs"]),
+ dict(t="Nebius EBITDA quality", d="Q3 adj. EBITDA includes $325.1m of non-recurring revenue; excluding it, leverage is ~16x rather than 4.9x - now a switchable recurring-EBITDA view.", s="Quality", src=["nbisFs"]),
  dict(t="Nebius maturity wall", d="Handoff placed the undrawn $3.5bn Citi facility in the 2027 maturity bucket and in liquidity. It is now liquidity only.", s="Corrected", src=["nbisFs"]),
  dict(t="WhiteFiber RPO drop", d="RPO fell to $729.0m at 30 Sep from $1,008.0m at 30 Jun (10-Q XBRL) even as the 10-year ~$865m Nscale order started billing; reason not explained in the extract reviewed.", s="Open", src=["wyfiQ"]),
  dict(t="Fluidstack funding", d="Fluidstack says it raised $830m in January at $7.5bn (Bloomberg); Dealroom reports a $750m round at $7.5bn. An unverified '$15bn project debt' figure is excluded.", s="Unverified", src=["bbgFs","drFs"]),
@@ -249,21 +325,22 @@ discrepancies = [
  dict(t="Oracle capex guide", d="FY27 capex of $90-95bn is from news, not the 10-Q.", s="News-only", src=["handoff"]),
 ]
 gaps = ("Not disclosed: active MW for Nebius, IREN, Oracle, Cipher and Hut 8; Galaxy dollar backlog; Nscale financing costs, maturities, capex and interest; "
-        "TeraWulf Google backstop size; total debt for Lambda, Crusoe, Fluidstack and Together AI; Oracle full maturity ladder after the Nov notes. "
+        "TeraWulf Google backstop size; Oracle undrawn committed facilities (n/a in the 10-Q extract) and the 24-month ladder beyond the $7.6bn current portion; SpaceX ladder and undrawn lines; costs attributable to Nebius' $325.1m point-in-time revenue; CDS levels for names other than CoreWeave and Oracle; total debt for Lambda, Crusoe, Fluidstack and Together AI; Oracle full maturity ladder after the Nov notes. "
         "Street estimates not collected (management guidance used). Agency ratings come from the earlier research pack (agency/news), not filings - "
         "original links not retained. Several named-contract sizes (CoreWeave-Meta/OpenAI, Nebius-Meta, Oracle-OpenAI) are News from the earlier pack.")
 
 edgar = dict(checked=now.strftime("%d %b %Y %H:%M SGT"),
   result=("EDGAR submissions checked for all 13 SEC registrants. No 10-Q/10-K/20-F/6-K newer than the handoff. Newer filings incorporated: "
-          "Oracle 8-K (4 Nov 2026, $10bn notes + equity), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). "
+          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). "
           "Reviewed, not material to credit: Oracle 8-K Item 5.07 (20 Nov), SpaceX 8-K Item 5.02 (6 Nov), Applied Digital 8-K Item 5.07 (6 Nov), Schedule 13G/13D and Form 4 filings."),
-  src=["orcl8k","wyfiQ","wyfi8k","wyfi8kb","crwv144"])
+  src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144"])
 
 out = dict(
   updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="22 Nov 2026",
   sources=S, companies=companies, agg=agg, cost=cost, news=news, earlier=earlier, upcoming=upcoming,
   scale=scale, sim=dict(factors=sim, score=simScore), telecom=telecom, verdict=verdict, macro=macro,
   discrepancies=discrepancies, claims=claims, gaps=gaps, edgar=edgar,
+  audit=audit, changelog=changelog, obs=obs, holders=holders, grid=grid,
 )
 # integrity check: every src key exists
 def keys(o):
@@ -285,6 +362,4 @@ with open(os.path.join(here, "..", "data.js"), "w") as f:
     f.write("// Neocloud Credit Dashboard data - generated by tools/build_data.py. Do not edit by hand.\n")
     f.write("window.NCD = " + json.dumps(out, ensure_ascii=False, indent=1) + ";\n")
 print("built", out["updated_sgt"], "SGT | sim", simScore, "| scale", scale["score"], "| coreDebt", agg["coreDebt"])
-for c in companies:
-    print(f"{c['name']:22} score {c['score']} lev {c['lev']} cov {c['cov']} ecx {c['ecx']} run {c['runway']} debt {c['debt']}")
-print(scale["rows"]); print([ (x['f'][:25],x['s']) for x in scale['factors']])
+for r in changelog: print(f"{r['name']:18} {r['old']} -> {r['new']} (pf {r['pf']}) | {r['note']}")
