@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neocloud Credit Dashboard</title>
+<meta name="description" content="Credit view of neoclouds and AI data-centre developers: debt, backlog, capacity, credit math and supplier support, checked against SEC filings.">
+<script src="data.js"></script><script src="chart.umd.min.js"></script>
+<style>
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;--bg:#f5f5f7;--panel:#fff;--panel2:#fafafc;--line:rgba(0,0,0,.08);--hair:#d2d2d7;--txt:#1d1d1f;--mut:#6e6e73;--mut2:#86868b;--acc:#5B5CE6;--accsoft:rgba(91,92,230,.10);--pos:#1d8a3a;--neg:#d70015;--warn:#b25000;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 18px rgba(0,0,0,.05);--glass:rgba(251,251,253,.72);--seg:#e8e8ed}
+[data-theme=dark]{--bg:#000;--panel:#1c1c1e;--panel2:#232325;--line:rgba(255,255,255,.1);--hair:#3a3a3c;--txt:#f5f5f7;--mut:#a1a1a6;--mut2:#8e8e93;--acc:#8B8AFF;--accsoft:rgba(139,138,255,.16);--pos:#30d158;--neg:#ff453a;--warn:#ffb340;--shadow:0 1px 2px rgba(0,0,0,.3),0 4px 18px rgba(0,0,0,.4);--glass:rgba(22,22,23,.72);--seg:#2c2c2e}
+*{box-sizing:border-box}body{margin:0;font-family:var(--font);background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:var(--glass);border-bottom:1px solid var(--line)}
+.hd{max-width:1240px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hd h1{font-size:19px;margin:0;font-weight:600;letter-spacing:-.01em}.hd .s{color:var(--mut);font-size:13px}
+.sp{flex:1}.seg{display:flex;background:var(--seg);border-radius:9px;padding:2px;flex-wrap:wrap}.seg button{border:0;background:none;color:var(--txt);font:500 13px var(--font);padding:6px 12px;border-radius:7px;cursor:pointer}.seg button.on{background:var(--panel);box-shadow:var(--shadow)}
+.tbtn{border:1px solid var(--hair);background:var(--panel);color:var(--txt);border-radius:20px;padding:6px 12px;cursor:pointer;font:13px var(--font)}
+main{max-width:1240px;margin:auto;padding:22px 20px 60px}
+.upd{display:inline-flex;align-items:center;gap:8px;margin:0 0 14px;padding:5px 12px;border-radius:980px;background:var(--accsoft);color:var(--acc);font-size:13px;font-weight:600}
+.upd .dot{width:7px;height:7px;border-radius:50%;background:var(--acc);flex:none}.upd .tz{color:var(--mut);font-weight:500}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--panel);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.kpi .l{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}.kpi .v{font-size:26px;font-weight:600;margin:6px 0 2px;letter-spacing:-.02em}.kpi .n{font-size:12px;color:var(--mut2);line-height:1.35}
+sup a{font-size:10px;margin-left:1px}
+h2{font-size:22px;letter-spacing:-.015em;margin:26px 0 12px}h3{font-size:16px;margin:0 0 8px}
+.card{background:var(--panel);border-radius:18px;padding:18px 20px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid2>*{min-width:0}
+.note{font-size:12.5px;color:var(--mut);line-height:1.45}
+.tab{display:none}.tab.on{display:block;animation:pop .35s}@keyframes pop{from{opacity:0;transform:translateY(6px)}}
+table{width:100%;border-collapse:collapse;font-size:13.5px}th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+th.s{cursor:pointer;user-select:none}th.s:hover{color:var(--acc)}th.s.on{color:var(--acc)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow-x:auto}
+.wn{border-left:4px solid var(--acc)}.wn ul,.cu ul{margin:8px 0 0;padding:0;list-style:none}.wn li{margin:0 0 11px;font-size:14px;color:var(--mut)}.wn li b{font-weight:600;color:var(--txt)}
+.wn .d{display:inline-block;min-width:86px;color:var(--mut);font-size:12px;font-variant-numeric:tabular-nums}
+.wn li.new48,.wn li.new48 b{color:var(--acc);font-weight:600}.wn li.new48 .d{color:var(--mut);font-weight:400}
+.wn .src{font-size:12.5px;color:var(--mut);font-weight:400;margin-top:2px;line-height:1.4}
+.nb{display:inline-block;background:var(--acc);color:#fff;font-size:11px;border-radius:8px;padding:0 6px;margin-right:6px;font-weight:600;vertical-align:1px}
+.cu li{display:grid;grid-template-columns:150px 1fr;gap:10px;font-size:13.5px;padding:7px 0;border-bottom:1px solid var(--line)}.cu li:last-child{border:0}
+.cu .when{color:var(--mut2);font-size:12.5px}.cu .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.b{display:inline-block;font-size:10.5px;font-weight:600;border-radius:6px;padding:1px 6px;margin:0 2px;vertical-align:1px;white-space:nowrap}
+.b.Reported{background:rgba(29,138,58,.12);color:var(--pos)}.b.Mgmt{background:var(--accsoft);color:var(--acc)}.b.News{background:rgba(178,80,0,.12);color:var(--warn)}.b.Calc{background:var(--seg);color:var(--mut)}
+.pill{display:inline-block;font-size:11.5px;border-radius:980px;padding:2px 9px;font-weight:600;white-space:nowrap}
+.pill.ok{background:rgba(29,138,58,.12);color:var(--pos)}.pill.warn{background:rgba(178,80,0,.12);color:var(--warn)}.pill.bad{background:rgba(215,0,21,.10);color:var(--neg)}.pill.mut{background:var(--seg);color:var(--mut)}
+.sc{display:inline-block;min-width:34px;text-align:center;border-radius:8px;padding:2px 6px;font-weight:700;font-size:12.5px}
+.sc.g{background:rgba(29,138,58,.14);color:var(--pos)}.sc.y{background:rgba(178,80,0,.14);color:var(--warn)}.sc.r{background:rgba(215,0,21,.12);color:var(--neg)}.sc.x{background:var(--seg);color:var(--mut)}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.filters select,.filters input[type=search]{font:13px var(--font);padding:7px 10px;border-radius:9px;border:1px solid var(--hair);background:var(--panel);color:var(--txt)}
+.filters label{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.cc h3{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.cc .meta{font-size:12.5px;color:var(--mut);margin-bottom:8px}
+.cc dl{margin:0;display:grid;grid-template-columns:118px 1fr;gap:6px 10px;font-size:13px}.cc dt{color:var(--mut);font-size:12px}.cc dd{margin:0;line-height:1.4}
+.cc details{margin-top:8px}.cc summary{cursor:pointer;color:var(--acc);font-size:13px}
+.verdict{border-left:4px solid var(--acc);font-size:15px;line-height:1.55}
+.big{font-size:44px;font-weight:700;letter-spacing:-.03em}
+.srcs{padding-left:22px}.srcs li{margin:6px 0;font-size:13px}.srcs .d{color:var(--mut2)}
+.ch{position:relative;width:100%}canvas{max-width:100%}
+.legend{font-size:12px;color:var(--mut);margin-top:6px}
+footer{max-width:1240px;margin:auto;padding:20px;color:var(--mut2);font-size:12px;border-top:1px solid var(--line)}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}.cu li{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+@media print{header{position:static}.tab{display:block!important}}
+</style></head><body>
+<header><div class="hd"><div><h1>Neocloud Credit Dashboard</h1><div class="s">Debt · backlog · capacity · credit math · supplier support · checked against SEC filings</div></div><div class="sp"></div>
+<div class="seg" id="tabs"><button data-t="ov" class="on">Overview</button><button data-t="co">Companies</button><button data-t="cm">Credit math</button><button data-t="cap">Capacity &amp; supply</button><button data-t="cmp">AI vs 2008</button><button data-t="src">Sources &amp; method</button></div>
+<button class="tbtn" id="theme" title="Light / dark">◐</button></div></header>
+<main>
+<!-- OVERVIEW -->
+<section class="tab on" id="t-ov">
+ <div class="upd" id="lastupd"></div>
+ <div class="kpis" id="kpis"></div>
+ <div class="grid2">
+  <div class="card wn" id="wn"></div>
+  <div class="card cu" id="cu"></div>
+ </div>
+ <h2>Key takeaways</h2><div class="card" id="take"></div>
+ <h2>Cross-set credit summary</h2><div class="card tw"><table id="sumT"></table><p class="note">Score = our 0-100 credit score (Calc, not a rating): leverage 30 · coverage 25 · runway 20 · counterparty 15 · rating 10. Runway uses unrestricted cash + committed undrawn facilities. n/m = not meaningful (negative EBITDA). Click a company for its card.</p></div>
+</section>
+<!-- COMPANIES -->
+<section class="tab" id="t-co">
+ <h2>Companies</h2>
+ <div class="filters">
+  <input type="search" id="q" placeholder="Search name or ticker">
+  <select id="fList"><option value="">All listings</option><option>Public</option><option>IPO pending</option><option>Private</option></select>
+  <select id="fRat"><option value="">All ratings</option><option value="IG">Investment grade</option><option value="HY">High yield</option><option value="Unrated">Unrated</option></select>
+  <select id="fReg"><option value="">All regions</option><option>North America</option><option>Europe</option></select>
+  <select id="fSize"><option value="">All sizes</option><option>Large</option><option>Mid</option><option>Small</option></select>
+  <select id="fVer"><option value="">Any verification</option><option value="Yes">Verified vs filing: Yes</option><option value="Private">Private</option></select>
+  <label><input type="checkbox" id="fNv"> Nvidia-backed only</label>
+  <span class="sp"></span>
+  <div class="seg" id="cols"><button data-c="credit" class="on">Credit</button><button data-c="fund">Funding &amp; support</button><button data-c="ops">Capacity &amp; timing</button></div>
+  <div class="seg" id="view"><button data-v="table" class="on">Table</button><button data-v="cards">Cards</button></div>
+ </div>
+ <div class="note" id="count" style="margin-bottom:8px"></div>
+ <div class="card tw" id="coTable"><table id="coT"></table></div>
+ <div class="cards" id="coCards" style="display:none"></div>
+</section>
+<!-- CREDIT MATH -->
+<section class="tab" id="t-cm">
+ <h2>Credit math</h2>
+ <div class="kpis" id="cmK"></div>
+ <div class="grid2">
+  <div class="card"><h3>Leverage vs coverage</h3><div class="ch" style="height:310px"><canvas id="cSc"></canvas></div><p class="note">Net debt / run-rate EBITDA vs EBITDA / interest (Calc). Negative-EBITDA names (Cipher, TeraWulf, WhiteFiber, Nscale) and Galaxy (n/m) excluded. SpaceX leverage includes ~$44bn Saturn off-balance-sheet debt.</p></div>
+  <div class="card"><h3>Cash runway (months)</h3><div class="ch" style="height:310px"><canvas id="cRw"></canvas></div><p class="note">(Unrestricted cash + committed undrawn facilities) ÷ monthly burn, burn = (capex − operating cash flow) / 3 for the latest quarter (Calc). Restricted cash excluded. Bars capped at 36 months.</p></div>
+  <div class="card"><h3>Maturity wall ($bn principal)</h3><div class="ch" style="height:310px"><canvas id="cMw"></canvas></div><p class="note">Reported ladders. IREN (June) and Applied Digital (May) fiscal years mapped to the calendar year they end in. Nebius excludes the undrawn $3.5bn Citi facility. Excludes Oracle, SpaceX, Nscale (no ladder in view).</p></div>
+  <div class="card"><h3>Financing cost by instrument</h3><div class="ch" style="height:310px"><canvas id="cFc"></canvas></div><p class="note">Coupon / effective rate <span class="b Reported">Reported</span> or market yield <span class="b News">News</span>. Sharon AI shown as a market comparable.</p></div>
+ </div>
+ <h2>Credit math by company</h2>
+ <div class="card tw"><table id="cmT"></table><p class="note">All USD. Run-rate EBITDA = 4 × latest-quarter adjusted EBITDA (Oracle: TTM operating income + depreciation). Net debt = debt principal − cash incl. restricted (Hut 8 also nets restricted short-term investments). (EBITDA − capex)/interest uses the latest quarter.</p></div>
+ <h2>Credit score rubric (Calc, 0-100)</h2>
+ <div class="card tw"><table id="rubT"></table></div>
+</section>
+<!-- CAPACITY & SUPPLY -->
+<section class="tab" id="t-cap">
+ <h2>Capacity &amp; backlog</h2>
+ <div class="grid2">
+  <div class="card"><h3>Backlog / RPO ($bn)</h3><div class="ch" style="height:340px"><canvas id="cBl"></canvas></div><p class="note">Oracle ($664bn RPO) shown in the table only to keep the scale readable. Definitions differ: RPO (Reported) vs management backlog / lease value (Mgmt) vs TCV.</p></div>
+  <div class="card"><h3>Installed vs planned / contracted MW</h3><div class="ch" style="height:340px"><canvas id="cMW"></canvas></div><p class="note">Only companies that disclose MW. Planned = contracted or leased capacity (Mgmt/Reported).</p></div>
+ </div>
+ <div class="card tw" style="margin-top:16px"><table id="capT"></table></div>
+ <h2>Supplier support (Nvidia, AMD, Google and other backstops)</h2>
+ <div class="card tw"><table id="supT"></table><p class="note" id="supNote"></p></div>
+</section>
+<!-- AI vs 2008 -->
+<section class="tab" id="t-cmp">
+ <h2>AI financing vs 2008 subprime (and the 2000 telecom bust)</h2>
+ <div class="card verdict" id="verdict"></div>
+ <div class="grid2" style="margin-top:16px">
+  <div class="card"><h3>Score 1 · Similarity to 2007-08 subprime <span class="b Calc">Calc</span></h3><div class="big" id="simBig"></div><div class="note">0 = nothing in common, 100 = same set-up. Weighted average of the factor scores below; sub-scores are our judgement from the cited evidence.</div></div>
+  <div class="card"><h3>Score 2 · Scale relative to the economy <span class="b Calc">Calc</span></h3><div class="big" id="scaleBig"></div><div class="note" id="scaleLine"></div></div>
+ </div>
+ <h2>Score 1 rubric: similarities and differences</h2>
+ <div class="card tw"><table id="simT"></table></div>
+ <h2>Score 2 rubric: debt as % of US GDP</h2>
+ <div class="grid2"><div class="card"><div class="ch" style="height:300px"><canvas id="cGdp"></canvas></div><p class="note">2007 ratios use 2007 nominal GDP $14,474.2bn (BEA via FRED); today's use Q3 2026 GDP $33,010.0bn SAAR (BEA advance, 29 Oct 2026). The JPMorgan AI-debt estimate dates from late 2025, so the current ratio is if anything understated.</p></div>
+ <div class="card tw"><table id="scT"></table><table id="scF" style="margin-top:14px"></table></div></div>
+ <h2>Comparison with the 2000 telecom and fibre bust</h2>
+ <div class="card tw"><table id="telT"></table></div>
+ <h2>How big is AI and data-centre debt? Third-party estimates</h2>
+ <div class="card tw"><table id="macT"></table></div>
+ <h2>Watch indicators</h2>
+ <div class="card tw"><table id="watT"></table></div>
+</section>
+<!-- SOURCES -->
+<section class="tab" id="t-src">
+ <h2>Method</h2>
+ <div class="card" id="method"></div>
+ <h2>EDGAR check for newer filings</h2><div class="card" id="edgar"></div>
+ <h2>Filing vs news discrepancies</h2><div class="card tw"><table id="disT"></table></div>
+ <h2>Third-party claims check</h2><div class="card tw"><table id="clT"></table><p class="note">Claims from another AI's version of this comparison, treated as leads to check (not as a source) and resolved against filings or primary documents.</p></div>
+ <h2>Data gaps</h2><div class="card note" id="gaps" style="font-size:14px"></div>
+ <h2>Sources</h2><div class="card"><ol class="srcs" id="srcs"></ol></div>
+</section>
+</main>
+<footer>© 2026 Hugo Tian · Data as of <span id="upd"></span> · Filing wins over news. Labels: Reported = SEC filing · Mgmt = management guidance/disclosure · News = press or agency · Calc = our calculation. Not investment advice.</footer>
+<script>
+const D=window.NCD,S=D.sources,SK=Object.keys(S),$=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const cite=ks=>(ks||[]).filter(k=>S[k]).map(k=>`<sup><a href="${S[k].u}" target="_blank" rel="noopener" title="${esc(S[k].t)} (${S[k].pub}, ${S[k].d})">[${SK.indexOf(k)+1}]</a></sup>`).join('');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+const LBL=/(Reported|Mgmt|News|Calc)/;
+function lbl(t){return esc(t).replace(/· ((?:Reported|Mgmt|News|Calc)(?:\/[A-Za-z]+)*(?: prelim\.)?(?: \([^)]*\))?)/g,(m,g)=>{const k=(g.match(LBL)||['Calc'])[0];return `<span class="b ${k}">${g}</span>`})}
+const fx=(v,d=1,s='')=>v==null?'n/a':(+v).toFixed(d)+s;
+const bn=v=>v==null?'n/a':'$'+(v>=10?v.toFixed(1):v>=1?v.toFixed(2):v.toFixed(2))+'bn';
+const scCls=s=>s==null?'x':s>=70?'g':s>=40?'y':'r';
+const scH=s=>`<span class="sc ${scCls(s)}">${s==null?'n/a':s}</span>`;
+const verH=v=>`<span class="pill ${String(v).startsWith('Yes')?'ok':'warn'}">${v.startsWith('Yes')?'✓ ':''}${esc(v)}</span>`;
+const levH=c=>c.lev!=null?fx(c.lev,1,'x'):((c.ebitda!=null&&c.ebitda<=0)||(c.cov!=null&&c.cov<0))?'n/m':'n/a';
+const C=D.companies;
+// stamp
+const stamp=D.updated_sgt;
+$('#lastupd').innerHTML=`<span class="dot"></span>Last updated ${stamp} SGT <span class="tz">(UTC+8 · build time)</span>`;
+$('#upd').textContent=stamp+' SGT';
+// theme
+const root=document.documentElement,mq=matchMedia('(prefers-color-scheme: dark)');
+root.dataset.theme=localStorage.getItem('ncd-theme')||(mq.matches?'dark':'light');
+$('#theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('ncd-theme',root.dataset.theme);drawAll()};
+// tabs
+let curTab='ov';
+function show(t){curTab=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.tab').forEach(s=>s.classList.toggle('on',s.id==='t-'+t));history.replaceState(null,'','#'+t);drawAll()}
+$$('#tabs button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+// ---------- OVERVIEW ----------
+const A=D.agg,pub=C.filter(c=>c.listing!=='Private');
+const crwv=C.find(c=>c.id==='crwv');
+$('#kpis').innerHTML=[
+ ['Companies covered',C.length,`${A.verifiedYes.length} verified vs latest SEC filing · ${C.filter(c=>c.listing==='Private').length} private (News)`,[]],
+ ['Neocloud & developer debt',`$${A.coreDebt.toFixed(1)}bn`,`${A.coreN} public / IPO-pending names, principal · Reported sum (Calc)`,[]],
+ ['Contracted backlog (same set)',`$${A.coreBacklog.toFixed(0)}bn`,'RPO / backlog / TCV, Mgmt + Reported; Galaxy n/a',[]],
+ ['Runway under 6 months',`${A.runwayU6.length} of ${A.scored}`,A.runwayU6.join(', ')+' · unrestricted cash basis (Calc)',[]],
+ ['CoreWeave 5-yr CDS','~1,150bp','range 1,100-1,200bp; 2031s yield ~16% · News, 18 Nov 2026',['cnbcCds']],
+ ['Nvidia neocloud commitments','$32bn','down from $36bn; contingent on financing & deployment · News',['cnbcNvda']],
+].map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}${cite(k[3])}</div><div class="n">${k[2]}</div></div>`).join('');
+const bt=new Date(D.updated_iso),day=864e5;
+const newsIn=D.news.filter(n=>bt-new Date(n.date+'T23:59:59+08:00')<7*day);
+$('#wn').innerHTML=`<h3>What's new this week</h3><div class="note">Rolling 7 days to ${stamp} SGT · items from the last 48h in accent</div><ul>${newsIn.map(n=>{const f=bt-new Date(n.date+'T23:59:59+08:00')<2*day;
+ return `<li class="${f?'new48':''}"><span class="d">${n.date}</span>${f?'<span class="nb">48h</span>':''}<span class="b ${n.tag}">${n.tag}</span> <b>${esc(n.co)}: ${esc(n.h)}</b>${cite(n.src)}<div class="src">${esc(n.d)}</div></li>`}).join('')}</ul>
+<details><summary class="note" style="cursor:pointer">Earlier this month</summary><ul>${D.earlier.map(n=>`<li><span class="d">${n.date}</span>${esc(n.h)}${cite(n.src)}</li>`).join('')}</ul></details>`;
+$('#cu').innerHTML=`<h3>Coming up</h3><div class="note">Earnings, maturities, deal closings and deliveries</div><ul>${D.upcoming.map(u=>`<li><div><div class="when">${u.when}</div><div class="k">${u.kind}</div></div><div>${esc(u.what)}${cite(u.src)}</div></li>`).join('')}</ul>`;
+$('#take').innerHTML=`<ul style="margin:0;padding-left:18px;line-height:1.6;font-size:14.5px">
+<li><b>Funding, not demand, is the constraint.</b> CoreWeave and Nebius run ~4.6-4.9x run-rate leverage but burn ~$7.5bn a quarter; on unrestricted cash plus committed lines CoreWeave has ${fx(crwv.runway)} months and Nebius ${fx(C.find(c=>c.id==='nbis').runway)} months before new prepayments or deals.${cite(['crwvQ','nbisFs'])}</li>
+<li><b>Restricted cash flattered the developers.</b> Excluding ring-fenced construction cash, Hut 8 drops from 68 to ${fx(C.find(c=>c.id==='hut').runway)} months and Cipher to ${fx(C.find(c=>c.id==='cifr').runway)} months (3.0 with its post-quarter converts).${cite(['hutQ','cifrQ'])}</li>
+<li><b>Former miners are pre-EBITDA landlords.</b> Cipher, TeraWulf and WhiteFiber have ~zero or negative EBITDA; IREN, Applied Digital and Hut 8 cover interest below 1x. Their credit rests on tenant backstops (Google, AMD, IG hyperscalers) and project notes rated BB- to BBB-.</li>
+<li><b>Who backs the lease sets the price.</b> IG-backed project notes price ~6.1-7.1% (Hut 8, Cipher, IREN USPP); corporate HY and GPU debt ~7.75-10.7% (~16% in CoreWeave's secondary market). Oracle's new 2029-2046 notes came at 7.00-8.65%.${cite(['hutQ','irenQ','orcl8k','cnbcCds'])}</li>
+<li><b>Nvidia support is narrowing.</b> Commitments cut to $32bn and only effective once financing is secured and capacity is deployed; SpaceX moved ~$44bn of GPU financing off balance sheet via Saturn.${cite(['cnbcNvda','rtSaturn'])}</li></ul>`;
+const sumRows=C.filter(c=>c.listing!=='Private');
+$('#sumT').innerHTML=`<tr><th>Company</th><th class="n">Score</th><th class="n">Debt</th><th class="n">Net debt / EBITDA</th><th class="n">EBITDA / interest</th><th class="n">(EBITDA−capex) / int.</th><th class="n">Runway (mo)</th><th class="n">Backlog</th><th>Rating</th><th>Verified vs filing</th></tr>`+
+ sumRows.sort((a,b)=>(b.score??-1)-(a.score??-1)).map(c=>`<tr><td><a href="#" onclick="openCard('${c.id}');return false">${c.name}</a> <span class="note">${c.ticker}</span></td><td class="n">${scH(c.score)}</td><td class="n">${bn(c.debt)}</td><td class="n">${levH(c)}</td><td class="n">${fx(c.cov,1,'x')}</td><td class="n">${fx(c.ecx,1,'x')}</td><td class="n">${fx(c.runway)}</td><td class="n">${bn(c.backlog)}</td><td>${c.rating}</td><td>${verH(c.verified)}</td></tr>`).join('');
+// ---------- COMPANIES ----------
+let sortK='score',sortD=-1,cols='credit',view='table';
+const COLS={
+ credit:[['name','Company'],['score','Score',1],['debt','Debt',1],['lev','Net debt / EBITDA',1],['cov','EBITDA / int.',1],['runway','Runway (mo)',1],['backlog','Backlog',1],['rating','Rating'],['verified','Verified vs filing']],
+ fund:[['name','Company'],['listing','Listing'],['debt','Debt',1],['cost','Financing cost'],['supplier','Nvidia / upstream support'],['verified','Verified vs filing']],
+ ops:[['name','Company'],['type','Type'],['region','Region'],['capacity','Capacity (MW / GPU)'],['timing','Time to revenue'],['backlog','Backlog',1],['potrev','Potential revenue']]};
+function cell(c,k){switch(k){case'name':return `<a href="#" onclick="openCard('${c.id}');return false"><b>${c.name}</b></a> <span class="note">${c.ticker}</span>`;case'score':return scH(c.score);case'debt':return c.debt!=null?bn(c.debt):esc(c.debtTxt||'n/a');case'lev':return levH(c);case'cov':return fx(c.cov,1,'x');case'runway':return fx(c.runway);case'backlog':return c.backlog!=null?bn(c.backlog)+`<div class="note">${esc(c.backlogLbl)}</div>`:`<span class="note">${esc(c.backlogLbl||'n/a')}</span>`;case'verified':return verH(c.verified);default:return esc(c[k]??'n/a')}}
+function filt(){const q=$('#q').value.toLowerCase(),L=$('#fList').value,R=$('#fRat').value,G=$('#fReg').value,Z=$('#fSize').value,V=$('#fVer').value,N=$('#fNv').checked;
+ return C.filter(c=>(!q||(c.name+' '+c.ticker).toLowerCase().includes(q))&&(!L||c.listing===L)&&(!R||c.ratingClass===R)&&(!G||c.region===G)&&(!Z||c.size===Z)&&(!V||String(c.verified).startsWith(V))&&(!N||c.nvidia))}
+function renderCo(){const rows=filt();const num=COLS[cols].find(x=>x[0]===sortK);
+ rows.sort((a,b)=>{let va=a[sortK],vb=b[sortK];if(typeof va==='string'||typeof vb==='string')return sortD*String(va??'').localeCompare(String(vb??''));if(va==null&&vb==null)return 0;if(va==null)return 1;if(vb==null)return -1;return sortD*(va-vb)});
+ $('#count').textContent=`${rows.length} of ${C.length} companies shown · click a column header to sort · click a name to open its card`;
+ $('#coT').innerHTML='<tr>'+COLS[cols].map(([k,t,n])=>`<th class="s ${n?'n':''} ${k===sortK?'on':''}" data-k="${k}">${t}${k===sortK?(sortD>0?' ▲':' ▼'):''}</th>`).join('')+'</tr>'+rows.map(c=>'<tr>'+COLS[cols].map(([k,t,n])=>`<td class="${n?'n':''}">${cell(c,k)}</td>`).join('')+'</tr>').join('');
+ $$('#coT th.s').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortK===k)sortD=-sortD;else{sortK=k;sortD=(k==='name'||k==='lev')?1:-1}renderCo()});
+ $('#coCards').innerHTML=rows.map(card).join('');}
+function card(c){const f=c.filing;return `<div class="card cc" id="card-${c.id}"><h3><span>${c.name} <span class="note">${c.ticker}</span></span>${scH(c.score)}</h3>
+ <div class="meta">${c.type} · ${c.region} · ${c.listing} · ${esc(c.rating)}</div>
+ <div style="margin-bottom:8px">${verH(c.verified)} ${f?`<span class="note">${f.form} for ${f.period}, filed ${f.filed}</span> <a href="${S[f.src].u}" target="_blank" rel="noopener">filing ↗</a>`:'<span class="note">No SEC filings; figures are News/Mgmt with dates, lower confidence</span>'}</div>
+ <dl>${c.facts.map(x=>`<dt>${x[0]}</dt><dd>${lbl(x[1])}${cite(x[2])}</dd>`).join('')}
+ ${c.inp!==undefined||c.listing!=='Private'?`<dt>Credit math</dt><dd>Net debt / EBITDA ${levH(c)} · EBITDA/int. ${fx(c.cov,1,'x')} · (EBITDA−capex)/int. ${fx(c.ecx,1,'x')} · runway ${fx(c.runway)} mo <span class="b Calc">Calc</span></dd>`:''}
+ <dt>Credit score</dt><dd>${esc(c.scoreNote)} <span class="b Calc">Calc</span></dd></dl></div>`}
+function openCard(id){show('co');setView('cards');['#q','#fList','#fRat','#fReg','#fSize','#fVer'].forEach(s=>$(s).value='');$('#fNv').checked=false;renderCo();setTimeout(()=>{const e=$('#card-'+id);if(e){e.scrollIntoView({behavior:'smooth',block:'start'});e.style.outline='2px solid var(--acc)';setTimeout(()=>e.style.outline='',1800)}},60)}
+function setView(v){view=v;$$('#view button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('#coTable').style.display=v==='table'?'':'none';$('#coCards').style.display=v==='cards'?'':'none';$('#cols').style.visibility=v==='table'?'visible':'hidden'}
+$$('#view button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
+$$('#cols button').forEach(b=>b.onclick=()=>{cols=b.dataset.c;$$('#cols button').forEach(x=>x.classList.toggle('on',x===b));if(!COLS[cols].find(x=>x[0]===sortK)){sortK='name';sortD=1}renderCo()});
+['#q','#fList','#fRat','#fReg','#fSize','#fVer','#fNv'].forEach(s=>$(s).addEventListener('input',renderCo));
+renderCo();
+// ---------- CREDIT MATH ----------
+const sc=C.filter(c=>c.score!=null);
+$('#cmK').innerHTML=[
+ ['Median score (scored names)',(()=>{const a=sc.map(c=>c.score).sort((x,y)=>x-y);return a[Math.floor(a.length/2)]})(),`${sc.length} names with full inputs · Calc`],
+ ['Interest cover below 1x',C.filter(c=>c.cov!=null&&c.cov<1).length,C.filter(c=>c.cov!=null&&c.cov<1).map(c=>c.name).join(', ')],
+ ['Negative (EBITDA − capex)',C.filter(c=>c.ecx!=null&&c.ecx<0).length+' of '+C.filter(c=>c.ecx!=null).length,'every scored name is investing beyond its EBITDA'],
+ ['Largest 2027 wall','$11.0bn','CoreWeave, mostly amortising GPU loans · Reported'],
+].map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${k[2]}</div></div>`).join('');
+$('#cmT').innerHTML=`<tr><th>Company</th><th class="n">Debt</th><th class="n">Unrestr. cash</th><th class="n">Undrawn</th><th class="n">Net debt</th><th class="n">RR EBITDA</th><th class="n">ND/EBITDA</th><th class="n">EBITDA/int.</th><th class="n">(E−capex)/int.</th><th class="n">Burn / mo</th><th class="n">Runway</th><th>Score breakdown</th></tr>`+
+ C.filter(c=>c.listing!=='Private').map(c=>{const m=v=>v==null?'n/a':'$'+(Math.abs(v)>=1000?(v/1000).toFixed(1)+'bn':Math.round(v)+'m');return `<tr><td><b>${c.name}</b>${cite(c.filing?[c.filing.src]:[])}</td><td class="n">${bn(c.debt)}</td><td class="n">${m(c.cash_u)}</td><td class="n">${m(c.undrawn)}</td><td class="n">${m(c.nd)}</td><td class="n">${m(c.ebitda)}</td><td class="n">${levH(c)}</td><td class="n">${fx(c.cov,2,'x')}</td><td class="n">${fx(c.ecx,1,'x')}</td><td class="n">${m(c.burn)}</td><td class="n">${fx(c.runway,1,' mo')}</td><td class="note">${esc(c.scoreNote)}</td></tr>`}).join('');
+$('#rubT').innerHTML=`<tr><th>Component</th><th class="n">Max</th><th>Points</th></tr>`+[
+ ['L - Net debt / run-rate EBITDA','30','≤3x 30 · 3-5x 22 · 5-8x 14 · 8-12x 7 · >12x or negative EBITDA 0'],
+ ['C - EBITDA / interest','25','≥5x 25 · 3-5x 18 · 2-3x 12 · 1-2x 6 · <1x 0'],
+ ['R - Runway (unrestricted cash + committed undrawn)','20','≥24 months 20 · 12-24 14 · 6-12 8 · <6 3'],
+ ['Q - Counterparty quality','15','Mostly IG or IG-backstopped 15 · mixed 9 · weak/unknown 4'],
+ ['A - Best agency rating','10','IG 10 · BB 6 · B 3 · none 0']].map(r=>`<tr><td>${r[0]}</td><td class="n">${r[1]}</td><td>${r[2]}</td></tr>`).join('')+`<tr><td colspan="3" class="note">Score bands: ≥70 green · 40-69 amber · <40 red. Not a rating. Galaxy, Nscale and private companies are n/a.</td></tr>`;
+// ---------- CAPACITY & SUPPLY ----------
+$('#capT').innerHTML=`<tr><th>Company</th><th>Capacity</th><th>Time to revenue</th><th class="n">Backlog</th><th>Backlog basis</th><th>Potential revenue</th></tr>`+C.map(c=>`<tr><td><b>${c.name}</b></td><td>${esc(c.capacity||'n/a')}</td><td>${esc(c.timing||'n/a')}</td><td class="n">${bn(c.backlog)}</td><td class="note">${esc(c.backlogLbl||'')}</td><td>${esc(c.potrev||'n/a')}</td></tr>`).join('');
+$('#supT').innerHTML=`<tr><th>Company</th><th>Nvidia-backed</th><th>Support (equity · backstops · capacity purchases · other suppliers)</th><th>Sources</th></tr>`+C.map(c=>{const f=c.facts.find(x=>/Nvidia/.test(x[0]));return `<tr><td><b>${c.name}</b></td><td>${c.nvidia?'<span class="pill ok">Yes</span>':'<span class="pill mut">No</span>'}</td><td>${f?lbl(f[1]):esc(c.supplier)}</td><td>${f?cite(f[2]):''}</td></tr>`}).join('');
+$('#supNote').innerHTML=`Nvidia disclosed $32bn of maximum neocloud commitments at 25 Oct 2026 (down from $36bn), effective only if neoclouds secure financing and capacity is deployed and accepted; interim CEO Kress said guarantees would not survive construction delays.${cite(['cnbcNvda','tcNvda'])} Nvidia's total guarantees were $118bn at 25 Oct 2026, of which up to $105bn is residual-value support for OpenAI's 4.25 GW Ohio campus (effective from ~2028), $9.5bn power/systems and $3.5bn neocloud land/power/shell; no payments made.${cite(['nvda8k','cnbcNvdaQ3','ttNvda'])} Broadcom gives residual-value support of up to ~$43bn to the $63bn SPV leasing its racks to Anthropic.${cite(['avgo8k','avgoPr'])} Google backstops Fluidstack leases at Cipher, TeraWulf and Hut 8; AMD backstops Crusoe's $300m loan and 530 MW of Core Scientific leases.${cite(['cifrQ','wulfGoog','hutPr','rtCrusoeAmd','corzQ'])}`;
+// ---------- AI vs 2008 ----------
+const V=D.verdict;
+$('#verdict').innerHTML=`<b>Verdict.</b> ${esc(V.text)}${cite(['fcic','bis140','chiFed','altman'])}`;
+$('#simBig').innerHTML=`${D.sim.score}<span style="font-size:20px;color:var(--mut)"> / 100</span>`;
+$('#scaleBig').innerHTML=`${D.scale.score}<span style="font-size:20px;color:var(--mut)"> / 100</span>`;
+$('#scaleLine').textContent=D.scale.oneLine+' 100 would mean AI debt is as large relative to GDP as the 2007 benchmarks.';
+$('#simT').innerHTML=`<tr><th>Factor</th><th>Similar?</th><th class="n">Weight</th><th class="n">Sub-score</th><th class="n">Contribution</th><th>Evidence</th></tr>`+D.sim.factors.map(x=>`<tr><td><b>${esc(x.f)}</b></td><td><span class="pill ${x.side==='Similar'?'bad':x.side==='Different'?'ok':'warn'}">${x.side}</span></td><td class="n">${x.w}%</td><td class="n">${x.s}</td><td class="n">${(x.w*x.s/100).toFixed(1)}</td><td class="note" style="font-size:13px">${esc(x.why)}${cite(x.src)}</td></tr>`).join('')+`<tr><td colspan="4"><b>Weighted similarity score</b> <span class="b Calc">Calc</span></td><td class="n"><b>${D.sim.score}</b></td><td></td></tr>`;
+$('#scT').innerHTML=`<tr><th>Exposure</th><th class="n">$bn</th><th class="n">GDP $bn</th><th class="n">% GDP</th></tr>`+D.scale.rows.map(r=>`<tr><td>${esc(r.label)} <span class="note">${esc(r.tag)}</span>${cite(r.src)}</td><td class="n">${r.amt.toLocaleString('en-US',{maximumFractionDigits:1})}</td><td class="n">${r.gdp.toLocaleString('en-US')}</td><td class="n">${r.pct}%</td></tr>`).join('');
+$('#scF').innerHTML=`<tr><th>Factor</th><th class="n">Weight</th><th class="n">Sub-score</th><th>Basis</th></tr>`+D.scale.factors.map(x=>`<tr><td>${esc(x.f)}</td><td class="n">${x.w}%</td><td class="n">${x.s}</td><td class="note">${esc(x.why)} → ratio × 100, capped at 100</td></tr>`).join('')+`<tr><td><b>Scale score</b> <span class="b Calc">Calc</span></td><td></td><td class="n"><b>${D.scale.score}</b></td><td></td></tr>`;
+$('#telT').innerHTML=`<tr><th></th><th>2000-02 telecom / fibre</th><th>AI financing today</th><th>Sources</th></tr>`+D.telecom.map(x=>`<tr><td><b>${x.k}</b></td><td>${esc(x.t2000)}</td><td>${esc(x.ai)}</td><td>${cite(x.src)}</td></tr>`).join('');
+$('#macT').innerHTML=`<tr><th>Source</th><th>Estimate</th><th>Date</th><th></th></tr>`+D.macro.map(x=>`<tr><td><b>${x.k}</b></td><td>${esc(x.v)} <span class="b News">News</span></td><td class="note">${x.d}</td><td>${cite(x.src)}</td></tr>`).join('')+`<tr><td colspan="4" class="note">Estimates overlap (bonds, loans, leases and capex are different things) and should not be summed. 2007 comparators: home mortgages $11,079.9bn (Fed Z.1); subprime ~$1.2tn outstanding (Gorton, FCIC testimony); investment-bank leverage up to 40:1 (FCIC).${cite(['z1','gorton','fcic'])}</td></tr>`;
+$('#watT').innerHTML=`<tr><th>Indicator</th><th>Current value (sourced)</th><th></th></tr>`+V.watch.map(x=>`<tr><td><b>${x.k}</b></td><td>${esc(x.v)}</td><td>${cite(x.src)}</td></tr>`).join('');
+// ---------- SOURCES ----------
+$('#method').innerHTML=`<ul style="margin:0;padding-left:18px;line-height:1.6;font-size:14px">
+<li><b>Primary data.</b> Every public-company figure was checked against the latest 10-Q / 10-K / 6-K (Nebius, a foreign private issuer) / S-1/A (Nscale, preliminary) on SEC EDGAR; the filing link is on each card with a 'Verified vs filing' flag. Filing wins over news. Private companies have no filings: figures are dated News or company press releases (Mgmt), lower confidence, n/a where unknown.</li>
+<li><b>Labels.</b> Reported = SEC filing · Mgmt = management guidance or disclosure (preferred over Street; Street not collected) · News = press, data providers or rating agencies · Calc = our calculation from cited inputs.</li>
+<li><b>Run-rate EBITDA</b> = 4 × latest-quarter adjusted EBITDA (Oracle: TTM operating income + depreciation). <b>Net debt</b> = debt principal − cash incl. restricted (Hut 8 also nets restricted short-term investments). <b>Coverage</b> = EBITDA / interest expense (Oracle TTM). <b>(EBITDA − capex) / interest</b> uses the latest quarter.</li>
+<li><b>Cash runway (months)</b> = (unrestricted cash and cash equivalents + committed undrawn facilities) ÷ monthly burn, where burn = (capex − operating cash flow) / 3 for the latest quarter. <b>Restricted cash, restricted investments and marketable securities are excluded.</b> Post-quarter facilities are included only when committed and signed (Nebius Citi, TeraWulf revolver); unfunded conditional loans (WhiteFiber NC-1) and expected prepayments (CoreWeave ~$9bn) are excluded. Because project capex is often paid from restricted accounts, this is conservative for funded developers.</li>
+<li><b>Credit score</b> (0-100, Calc): leverage 30 · coverage 25 · runway 20 · counterparty 15 · rating 10; rubric on the Credit math tab. Counterparty and rating points are judgement inputs listed per company.</li>
+<li><b>AI vs 2008 scores</b> (Calc): similarity = weighted average of nine factor sub-scores (judgement, evidence cited); scale = weighted ratios of debt / GDP vs 2007 subprime and mortgage benchmarks, with GDP from BEA.</li>
+<li><b>Updating.</b> Edit <code>tools/companies.py</code> (inputs and facts), <code>tools/sources.py</code> (citations) and the news/coming-up lists in <code>tools/build_data.py</code>, then run <code>python3 tools/build_data.py</code> to regenerate <code>data.js</code> and the SGT timestamp. The build fails if any figure cites a missing source key.</li></ul>`;
+$('#edgar').innerHTML=`<div style="font-size:14px;line-height:1.55">Checked ${esc(D.edgar.checked)}. ${esc(D.edgar.result)}${cite(D.edgar.src)}</div>`;
+$('#disT').innerHTML=`<tr><th>Item</th><th>Detail</th><th>Status</th><th></th></tr>`+D.discrepancies.map(x=>`<tr><td><b>${esc(x.t)}</b></td><td>${esc(x.d)}</td><td><span class="pill ${/Corrected|Filing used|Method|Newer/.test(x.s)?'ok':/Minor|Definition/.test(x.s)?'mut':'warn'}">${x.s}</span></td><td>${cite(x.src)}</td></tr>`).join('');
+$('#gaps').textContent=D.gaps;
+$('#clT').innerHTML=`<tr><th>Claim</th><th>Status</th><th>Our finding</th><th></th></tr>`+D.claims.map(x=>`<tr><td><b>${esc(x.c)}</b></td><td><span class="pill ${x.st.startsWith('Confirmed')?'ok':x.st.startsWith('Corrected')?'warn':'bad'}">${x.st}</span></td><td>${esc(x.v)}</td><td>${cite(x.src)}</td></tr>`).join('');
+$('#srcs').innerHTML=SK.map(k=>`<li id="s-${k}"><a href="${S[k].u}" target="_blank" rel="noopener">${esc(S[k].t)}</a> <span class="d">· ${S[k].pub} · ${S[k].d}</span></li>`).join('');
+// ---------- CHARTS ----------
+const charts={};
+function cv(n){return getComputedStyle(root).getPropertyValue(n).trim()}
+function mk(id,cfg){if(charts[id])charts[id].destroy();const el=document.getElementById(id);if(!el||!el.offsetParent)return;charts[id]=new Chart(el,cfg)}
+const PAL=['#5B5CE6','#30B0C7','#FF9F0A','#34C759','#FF375F','#AF52DE','#A2845E','#64D2FF','#FFD60A','#8E8E93','#FF6482','#0A84FF','#5E5CE6'];
+function base(extra){const t=cv('--txt'),m=cv('--mut'),g=cv('--line');Chart.defaults.color=m;Chart.defaults.font.family=cv('--font');
+ return Object.assign({responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:m,boxWidth:12}},tooltip:{}},scales:{x:{grid:{color:g},ticks:{color:m}},y:{grid:{color:g},ticks:{color:m}}}},extra||{})}
+function drawAll(){
+ if(curTab==='cm'){
+  const pts=C.filter(c=>c.lev!=null&&c.cov!=null&&c.cov>0);
+  mk('cSc',{type:'scatter',data:{datasets:pts.map((c,i)=>({label:c.ticker,data:[{x:c.lev,y:c.cov}],backgroundColor:PAL[i%PAL.length],pointRadius:7,pointHoverRadius:9}))},
+   options:base({plugins:{legend:{position:'bottom',labels:{boxWidth:10,color:cv('--mut')}},tooltip:{callbacks:{label:x=>`${x.dataset.label}: ${x.raw.x}x leverage, ${x.raw.y.toFixed(2)}x coverage`}}},
+   scales:{x:{title:{display:true,text:'Net debt / run-rate EBITDA (x)',color:cv('--mut')},min:0,grid:{color:cv('--line')}},y:{title:{display:true,text:'EBITDA / interest (x)',color:cv('--mut')},min:0,grid:{color:cv('--line')}}}})});
+  const rw=C.filter(c=>c.runway!=null).sort((a,b)=>a.runway-b.runway);
+  mk('cRw',{type:'bar',data:{labels:rw.map(c=>c.name),datasets:[{label:'Runway (months)',data:rw.map(c=>Math.min(c.runway,36)),backgroundColor:rw.map(c=>c.runway<6?cv('--neg'):c.runway<12?cv('--warn'):cv('--pos')),borderRadius:6}]},
+   options:base({indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>rw[x.dataIndex].runway+' months'}}},scales:{x:{max:36,grid:{color:cv('--line')},title:{display:true,text:'months (capped at 36)',color:cv('--mut')}},y:{grid:{display:false}}}})});
+  mk('cMw',{type:'bar',data:{labels:['2026','2027','2028','2029','2030','2031+'],datasets:D.agg.wallSeries.map((s,i)=>({label:s.name,data:s.values,backgroundColor:PAL[i],borderRadius:4}))},
+   options:base({plugins:{legend:{position:'bottom',labels:{boxWidth:10,color:cv('--mut')}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:cv('--line')},title:{display:true,text:'$bn',color:cv('--mut')}}}})});
+  const fc=D.cost;
+  mk('cFc',{type:'bar',data:{labels:fc.map(x=>x.label),datasets:[{data:fc.map(x=>x.value),backgroundColor:fc.map(x=>x.tag==='News'?cv('--warn'):cv('--acc')),borderRadius:5}]},
+   options:base({indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>fc[x.dataIndex].display+' · '+fc[x.dataIndex].tag}}},scales:{x:{grid:{color:cv('--line')},title:{display:true,text:'%',color:cv('--mut')}},y:{grid:{display:false},ticks:{font:{size:10.5}}}}})});
+ }
+ if(curTab==='cap'){
+  const bl=C.filter(c=>c.backlog!=null&&c.id!=='orcl').sort((a,b)=>b.backlog-a.backlog);
+  mk('cBl',{type:'bar',data:{labels:bl.map(c=>c.name),datasets:[{data:bl.map(c=>c.backlog),backgroundColor:bl.map(c=>c.listing==='Private'?cv('--warn'):cv('--acc')),borderRadius:5}]},
+   options:base({indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>'$'+bl[x.dataIndex].backlog+'bn · '+bl[x.dataIndex].backlogLbl}}},scales:{x:{grid:{color:cv('--line')},title:{display:true,text:'$bn (amber = private, News/Mgmt)',color:cv('--mut')}},y:{grid:{display:false}}}})});
+  const mw=C.filter(c=>c.capMW||c.capMWPlan);
+  mk('cMW',{type:'bar',data:{labels:mw.map(c=>c.name),datasets:[{label:'Installed / active MW',data:mw.map(c=>c.capMW||0),backgroundColor:cv('--acc'),borderRadius:4},{label:'Planned / contracted MW',data:mw.map(c=>c.capMWPlan||0),backgroundColor:cv('--accsoft'),borderColor:cv('--acc'),borderWidth:1,borderRadius:4}]},
+   options:base({indexAxis:'y',plugins:{legend:{position:'bottom',labels:{boxWidth:10,color:cv('--mut')}}},scales:{x:{grid:{color:cv('--line')},title:{display:true,text:'MW (0 = not disclosed)',color:cv('--mut')}},y:{grid:{display:false}}}})});
+ }
+ if(curTab==='cmp'){
+  const r=D.scale.rows.slice(0,4);
+  mk('cGdp',{type:'bar',data:{labels:r.map(x=>x.label),datasets:[{data:r.map(x=>x.pct),backgroundColor:[cv('--mut2'),cv('--neg'),cv('--acc'),cv('--accsoft')],borderColor:[cv('--mut2'),cv('--neg'),cv('--acc'),cv('--acc')],borderWidth:1,borderRadius:6}]},
+   options:base({indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>r[x.dataIndex].pct+'% of GDP'}}},scales:{x:{type:'logarithmic',grid:{color:cv('--line')},title:{display:true,text:'% of US GDP (log scale)',color:cv('--mut')}},y:{grid:{display:false},ticks:{font:{size:11}}}}})});
+ }
+}
+const h=location.hash.slice(1);if(['ov','co','cm','cap','cmp','src'].includes(h))show(h);
+</script>
+</body></html>
