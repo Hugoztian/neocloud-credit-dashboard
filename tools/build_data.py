@@ -102,6 +102,12 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 
 # ---------- What's new (rolling 7 days) ----------
 news = [
+ dict(date="2026-11-22", co="Supply chain", tag="News", h="FT: Dell, HPE, Lenovo and Supermicro seek 20-45% more on signed AI-server contracts before delivery as memory costs soar",
+      d="Memory prices up >400% since early 2024 (JPMorgan, cited by FT); GPU-server prices up at least 20-30% per one source. XTX Markets is suing Dell in Ireland over a demanded extra $62-70m on a $549m fixed-price order. Upside risk to capex per MW for GPU neoclouds; no company in the set has quantified an impact.", src=["ftServer"]),
+ dict(date="2026-11-20", co="Neoclouds", tag="News", h="Sector sell-off deepens: IREN -16%, Applied Digital and Core Scientific -12%, TeraWulf -10% intraday in a broad tech sell-off",
+      d="IREN: >$4bn ARR target slipped to Jan-Feb 2027 and ~$6bn of FY27 capex still unfunded (Mgmt, 5 Nov). Equity weakness raises the cost of the ATM/convertible funding several names rely on; credit inputs and scores are unchanged (no new filings).", src=["saIren","wsAiInfra","tikrIren"]),
+ dict(date="2026-11-20", co="Policy", tag="News", h="Trump threatens a 'tremendous tax' on US companies building AI data centres abroad",
+      d="No rate, mechanism or effective date given; taxes need Congress. Watch for US hyperscaler demand for overseas capacity (Nebius, Nscale, Fluidstack, CoreWeave Europe).", src=["cnbcTrumpDc"]),
  dict(date="2026-11-20", co="SPCX", tag="News", h="Apollo and Goldman price ~$44bn of senior and subordinated notes for SpaceX's Saturn GPU lease vehicle - 'largest GPU financing to date'",
       d="Oversubscribed and upsized; anchors BlackRock, Goldman Sachs Asset Management and KKR-advised accounts. Funds Nvidia Vera Rubin GPUs; lease schedules start on delivery in H1 2027. SpaceX's own 8-K (26 Oct) sizes the Apollo master finance lease at ~$40bn; a finance lease comes on balance sheet at commencement.", src=["rtSaturn","spcx8kLease"]),
  dict(date="2026-11-20", co="ORCL", tag="Mgmt", h="Oracle says its OpenAI contract is fully funded, including vendor financing",
@@ -110,22 +116,22 @@ news = [
       d="New 52-week low $39.28. Foundation has spent $108.3m of the $350m. Seven Form 144 insider-sale notices filed on EDGAR the same day.", src=["saCrwv","yhHuang","crwv144"]),
  dict(date="2026-11-20", co="Counterparty", tag="News", h="Anthropic closes IPO: ~$93.5bn gross ($91.6bn to the company) plus a $26.0bn concurrent private placement",
       d="Key end-customer for Fluidstack (TeraWulf, Cipher, Hut 8 sites), Nscale (up to $44.6bn) and Lambda. Lambda's ~$34.9bn agreement remains terminable by either party; neither had given notice as of the 18 Nov prospectus.", src=["antIpo","jaLambda"]),
+ dict(date="2026-11-18", co="CRWV", tag="News", h="CoreWeave co-founder McBee: cash goes to compute, not buying back ~15%-yield bonds; ~130,000 GPUs come off contract in 2027",
+      d="Bloomberg report of 18 Nov Austin remarks. Re-contracting coincides with CoreWeave's $11.0bn 2027 principal wall (Reported). CFO on the 10 Nov call (Mgmt): no new parent-level unsecured debt through 2027 at current yields; next DDTL expected investment grade at an implied 7-7.5% yield, financing >90% of the capex.", src=["sfMcBee","foolCrwv","crwvQ"]),
  dict(date="2026-11-18", co="CRWV / ORCL", tag="News", h="CoreWeave 5-yr CDS 1,100-1,200bp and 2031s near 16%; Oracle CDS above 300bp; first AI-CDS ETFs filed",
       d="Tuttle Capital and Defiance filed for ETFs that gain when CoreWeave/Oracle CDS widen. Co-founder Venturo disclosed buying $30m of CoreWeave 2031 unsecured bonds.", src=["cnbcCds","invCrwv"]),
- dict(date="2026-11-17", co="Grid", tag="News", h="Utility Dive: ~191 GW of planned data-centre capacity faces new risk as the build-out slows (Orennia)",
-      d="Utilities plan ~$1.3tn of capex in 2026-30 (S&P RRA); Rystad's risked view sees pauses delaying ~1-3 GW, more than 10 GW if sustained.", src=["udive","spUtil","rystad"]),
- dict(date="2026-11-16", co="Macro", tag="News", h="Fed Governor Barr: AI investment is increasingly debt-funded and it is hard to know where the risk sits",
-      d="Hyperscalers and GPU makers have made >$100bn of equity investments in model labs and cloud start-ups that are also their customers. Follows the 13 Nov Financial Stability Report: >$3tn of off-balance-sheet obligations at seven firms.", src=["barr","fedFsr"]),
  dict(date="2026-11-18", co="Nvidia", tag="News", h="Nvidia narrows its neocloud support: commitments cut to $32bn (from $36bn), effective only once financing is secured and capacity is deployed",
       d="Interim CEO Kress: guarantees start when projects are financed and would not survive construction delays. Morgan Stanley cut its deployment assumption to 4 GW from 5 GW.", src=["cnbcNvda","tcNvda"]),
  dict(date="2026-11-18", co="Macro", tag="News", h="Fed Governor Waller: a half-point hike may be needed at the December meeting",
       d="Higher floating rates would lift costs on SOFR-linked GPU and project loans (Nebius, IREN, Galaxy, WhiteFiber, Nscale).", src=["cnbcWaller"]),
+ dict(date="2026-11-17", co="Grid", tag="News", h="Utility Dive: ~191 GW of planned data-centre capacity faces new risk as the build-out slows (Orennia)",
+      d="Utilities plan ~$1.3tn of capex in 2026-30 (S&P RRA); Rystad's risked view sees pauses delaying ~1-3 GW, more than 10 GW if sustained.", src=["udive","spUtil","rystad"]),
  dict(date="2026-11-17", co="Fluidstack", tag="News", h="Situational Awareness pitches clients to co-invest in Fluidstack at a $40bn valuation (co-founder disputes the report)",
       d="Roughly double the $18bn Jane Street-led round of September.", src=["bbgFs","forbesFs"]),
- dict(date="2026-11-16", co="Comparable", tag="Reported", h="Sharon AI: $356m inaugural fixed-rate GPU-backed facility with Goldman and private credit funds (7.25% stepping to 9.95%; 9.95%)",
-      d="Shows GPU-backed pricing for a small neocloud with IG-heavy contracts; >75% of expected secured debt tied to Nvidia's AI Compute Program.", src=["shaz"]),
 ]
 earlier = [
+ dict(date="2026-11-16", h="Fed Governor Barr: AI investment increasingly debt-funded; hard to know where the risk sits", src=["barr","fedFsr"]),
+ dict(date="2026-11-16", h="Sharon AI: $356m GPU-backed facility with Goldman and private credit (7.25% stepping to 9.95%)", src=["shaz"]),
  dict(date="2026-11-13", h="Nscale: debt jumped to $5.5bn at 30 Sep from $137m; Nvidia commits a further $1bn; more financing needed for 2027", src=["axiosNscl","nsclS1"]),
  dict(date="2026-11-12", h="Nebius 6-K: Q3 adj. EBITDA $465.8m includes $325.1m one-off revenue; FY26 revenue at low end of $3.0-3.4bn", src=["nbisFs","nbisPr"]),
  dict(date="2026-11-10", h="WhiteFiber signs $300m Morgan Stanley NC-1 term loan (SOFR+6.00%, 2% floor), unfunded; 10-Q filed", src=["wyfi8k","wyfiQ"]),
@@ -134,6 +140,7 @@ earlier = [
  dict(date="2026-11-04", h="Oracle issues $10bn notes (7.000%-8.650%) and 86.2m shares; TeraWulf secures Google credit backstop", src=["orcl8k","wulfGoog"]),
 ]
 upcoming = [
+ dict(when="24 Nov 2026, 4:30pm ET (25 Nov 05:30 SGT)", what="IREN annual general meeting (virtual)", kind="Governance", src=["irenProxy"]),
  dict(when="25 Nov 2026", what="BEA second estimate of Q3 GDP (denominator for the scale score)", kind="Macro", src=["beaQ3"]),
  dict(when="Rest of 2026", what="CoreWeave principal due: $2.4bn", kind="Maturity", src=["crwvQ"]),
  dict(when="Rest of 2026", what="Galaxy 2026 exchangeable notes (~$0.45bn) mature", kind="Maturity", src=["glxyQ"]),
@@ -331,12 +338,12 @@ gaps = ("Not disclosed: active MW for Nebius, IREN, Oracle, Cipher and Hut 8; Ga
 
 edgar = dict(checked=now.strftime("%d %b %Y %H:%M SGT"),
   result=("EDGAR submissions checked for all 13 SEC registrants. No 10-Q/10-K/20-F/6-K newer than the handoff. Newer filings incorporated: "
-          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). "
+          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). Re-checked 23 Nov 2026: nothing newer than 20 Nov for any registrant (weekend); Nvidia's Q3 FY27 10-Q still not filed. "
           "Reviewed, not material to credit: Oracle 8-K Item 5.07 (20 Nov), SpaceX 8-K Item 5.02 (6 Nov), Applied Digital 8-K Item 5.07 (6 Nov), Schedule 13G/13D and Form 4 filings."),
   src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144"])
 
 out = dict(
-  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="22 Nov 2026",
+  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="23 Nov 2026",
   sources=S, companies=companies, agg=agg, cost=cost, news=news, earlier=earlier, upcoming=upcoming,
   scale=scale, sim=dict(factors=sim, score=simScore), telecom=telecom, verdict=verdict, macro=macro,
   discrepancies=discrepancies, claims=claims, gaps=gaps, edgar=edgar,
