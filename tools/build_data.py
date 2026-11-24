@@ -102,6 +102,16 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 
 # ---------- What's new (rolling 7 days) ----------
 news = [
+ dict(date="2026-11-23", co="Nvidia", tag="Reported", h="Nvidia board reinstates Jensen Huang as CEO, effective immediately; Kress stays CFO (8-K, 23 Nov)",
+      d="Board cites input from senior US government officials; the independent committee's investigation continues and a National Security and Export Control Committee was formed. Neocloud equities rallied on the day: CoreWeave +22%, IREN +24%, Nebius +20%, Oracle +12% at the close (News). Nvidia's $32bn conditional neocloud commitments are unchanged; Q3 FY27 10-Q still not filed. Credit inputs unchanged.", src=["nvda8kCeo","cnbcHuang","mwNeo"]),
+ dict(date="2026-11-23", co="APLD", tag="Mgmt", h="Applied Digital signs a 150 MW, 18-year lease with a tier-one IG hyperscaler (~$5.4bn base term) and closes a $300m 364-day bridge DDTL for Delta Forge 1",
+      d="Contracted base-term lease revenue now >$41bn (~$100bn with renewals), >1.6 GW contracted, ~75% investment-grade (Mgmt); delivery from 1H 2028. Bridge: SOFR+300bp, draws conditional on construction milestones, rate approvals, lender consents and covenants, so not counted in liquidity (as with WhiteFiber's NC-1 loan). Remaining Delta Forge 1 and Polaris Forge 3 project finance targeted for Q1 2027, Delta Forge 2 in Q2 2027 (Mgmt). No 8-K on EDGAR yet; quarter-end inputs unchanged.", src=["apldLease","apldBridge"]),
+ dict(date="2026-11-23", co="Financing market", tag="News", h="Nvidia-backed Firmus (Australia) seeks a ~$1.5bn bond in a debt package of up to $4bn, cut from ~$7.5bn targeted two months ago",
+      d="Bloomberg-sourced: 69-month bond and bank loan, bond yield ~8%, loan ~523bp over the benchmark; BBB from at least two agencies; proceeds for Nvidia GB300s in Indonesia (with DayOne). 912 MW pipeline, 46 MW built. Not in the coverage set; a read on pricing for GPU-backed neocloud debt.", src=["dcdFirmus","zbFirmus"]),
+ dict(date="2026-11-22", co="Nscale", tag="News", h="Observer: Nscale's IPO hopes dim as its ByteDance-linked sales draw scrutiny under tightening US chip rules",
+      d="Singapore-based ByteDance unit Spring at one point accounted for 73% of sales; the updated S-1 lists 'potential exposure' to a supplier with reported links to a blacklisted company. Nscale declined to comment (IPO quiet period). Adds to the IPO and 2027 funding risk already flagged.", src=["obsNscl","nsclS1"]),
+ dict(date="2026-11-19", co="Policy", tag="Reported", h="US Commerce interim final rule on remote access: licences for data centres serving China-headquartered firms at scale, and for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil",
+      d="Effective 19 Nov 2026 (comments due 19 Jan 2027). Licence needed to supply chips to any data centre giving >12m aggregate TPP to D:5/Macau-headquartered companies; the five-country licence does not apply to US-headquartered end users that report. Most relevant to neoclouds with Asian footprints (CoreWeave entered Indonesia in Q3; Nebius has Singapore customers) and to Nscale.", src=["bisRemote","wsSea"]),
  dict(date="2026-11-22", co="Supply chain", tag="News", h="FT: Dell, HPE, Lenovo and Supermicro seek 20-45% more on signed AI-server contracts before delivery as memory costs soar",
       d="Memory prices up >400% since early 2024 (JPMorgan, cited by FT); GPU-server prices up at least 20-30% per one source. XTX Markets is suing Dell in Ireland over a demanded extra $62-70m on a $549m fixed-price order. Upside risk to capex per MW for GPU neoclouds; no company in the set has quantified an impact.", src=["ftServer"]),
  dict(date="2026-11-20", co="Neoclouds", tag="News", h="Sector sell-off deepens: IREN -16%, Applied Digital and Core Scientific -12%, TeraWulf -10% intraday in a broad tech sell-off",
@@ -124,12 +134,10 @@ news = [
       d="Interim CEO Kress: guarantees start when projects are financed and would not survive construction delays. Morgan Stanley cut its deployment assumption to 4 GW from 5 GW.", src=["cnbcNvda","tcNvda"]),
  dict(date="2026-11-18", co="Macro", tag="News", h="Fed Governor Waller: a half-point hike may be needed at the December meeting",
       d="Higher floating rates would lift costs on SOFR-linked GPU and project loans (Nebius, IREN, Galaxy, WhiteFiber, Nscale).", src=["cnbcWaller"]),
- dict(date="2026-11-17", co="Grid", tag="News", h="Utility Dive: ~191 GW of planned data-centre capacity faces new risk as the build-out slows (Orennia)",
-      d="Utilities plan ~$1.3tn of capex in 2026-30 (S&P RRA); Rystad's risked view sees pauses delaying ~1-3 GW, more than 10 GW if sustained.", src=["udive","spUtil","rystad"]),
- dict(date="2026-11-17", co="Fluidstack", tag="News", h="Situational Awareness pitches clients to co-invest in Fluidstack at a $40bn valuation (co-founder disputes the report)",
-      d="Roughly double the $18bn Jane Street-led round of September.", src=["bbgFs","forbesFs"]),
 ]
 earlier = [
+ dict(date="2026-11-17", h="Utility Dive: ~191 GW of planned data-centre capacity faces new risk as the build-out slows (Orennia)", src=["udive"]),
+ dict(date="2026-11-17", h="Situational Awareness pitches a Fluidstack co-investment at a $40bn valuation (disputed by the co-founder)", src=["bbgFs","forbesFs"]),
  dict(date="2026-11-16", h="Fed Governor Barr: AI investment increasingly debt-funded; hard to know where the risk sits", src=["barr","fedFsr"]),
  dict(date="2026-11-16", h="Sharon AI: $356m GPU-backed facility with Goldman and private credit (7.25% stepping to 9.95%)", src=["shaz"]),
  dict(date="2026-11-13", h="Nscale: debt jumped to $5.5bn at 30 Sep from $137m; Nvidia commits a further $1bn; more financing needed for 2027", src=["axiosNscl","nsclS1"]),
@@ -150,6 +158,8 @@ upcoming = [
  dict(when="Coming weeks", what="Nvidia Q3 FY27 10-Q (neocloud commitment detail); OpenAI round's remaining up to ~$9bn", kind="Filing / funding", src=["cnbcNvda","bbgOai"]),
  dict(when="Before YE 2026 (target)", what="Nscale IPO (price range not yet set)", kind="Deal closing", src=["axiosNscl","nsclS1"]),
  dict(when="Q4 2026", what="Cipher Barber Lake first delivery; TeraWulf CB-4; Applied Digital Polaris Forge 2 initial ops; Lambda $4bn round", kind="Delivery / funding", src=["cifrQ","wulfDeck","apldQ","tcLambda"]),
+ dict(when="19 Jan 2027", what="Comment deadline on the US remote-access chip rule (already in effect since 19 Nov)", kind="Policy", src=["bisRemote"]),
+ dict(when="Q1 2027 (target)", what="Applied Digital project finance for Delta Forge 1 and Polaris Forge 3 (Delta Forge 2 in Q2 2027); takes out the $300m bridge", kind="Financing", src=["apldLease","apldBridge"]),
  dict(when="Early Jan 2027 (date n/a)", what="Applied Digital FQ2 FY27 results (quarter to 30 Nov)", kind="Earnings", src=["apldQ"]),
  dict(when="Jan-Feb 2027", what="IREN Microsoft capacity online; >$4bn ARR target", kind="Delivery", src=["irenPr"]),
  dict(when="H1 2027", what="Saturn GPU lease schedules start (SpaceX)", kind="Delivery", src=["rtSaturn"]),
@@ -338,12 +348,12 @@ gaps = ("Not disclosed: active MW for Nebius, IREN, Oracle, Cipher and Hut 8; Ga
 
 edgar = dict(checked=now.strftime("%d %b %Y %H:%M SGT"),
   result=("EDGAR submissions checked for all 13 SEC registrants. No 10-Q/10-K/20-F/6-K newer than the handoff. Newer filings incorporated: "
-          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). Re-checked 23 Nov 2026: nothing newer than 20 Nov for any registrant (weekend); Nvidia's Q3 FY27 10-Q still not filed. "
-          "Reviewed, not material to credit: Oracle 8-K Item 5.07 (20 Nov), SpaceX 8-K Item 5.02 (6 Nov), Applied Digital 8-K Item 5.07 (6 Nov), Schedule 13G/13D and Form 4 filings."),
-  src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144"])
+          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). Re-checked 23 Nov 2026: nothing newer than 20 Nov for any registrant (weekend). Re-checked 24 Nov 2026: Nvidia 8-K Item 5.02 (23 Nov, Huang reinstated as CEO) is the only new 8-K; no new 10-Q/10-K/20-F/6-K or 424B for any registrant; Nvidia's Q3 FY27 10-Q still not filed; no Applied Digital 8-K yet for its 23 Nov lease and bridge facility (press releases used, Mgmt). "
+          "Reviewed, not material to credit: Oracle 8-K Item 5.07 (20 Nov), SpaceX 8-K Item 5.02 (6 Nov), Applied Digital 8-K Item 5.07 (6 Nov), Applied Digital Schedule 13D/A (20 Nov), IREN Schedule 13G (19 Nov), Schedule 13G/13D and Form 4 filings."),
+  src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144","nvda8kCeo"])
 
 out = dict(
-  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="23 Nov 2026",
+  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="24 Nov 2026",
   sources=S, companies=companies, agg=agg, cost=cost, news=news, earlier=earlier, upcoming=upcoming,
   scale=scale, sim=dict(factors=sim, score=simScore), telecom=telecom, verdict=verdict, macro=macro,
   discrepancies=discrepancies, claims=claims, gaps=gaps, edgar=edgar,

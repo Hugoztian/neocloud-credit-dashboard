@@ -58,7 +58,7 @@ M = {
   inp=dict(debt=6721.6, cash_u=2949.9, cash_r=728.0, undrawn=347.6, ebitda_q=64.4, int_q=77.4, capex_q=2074.7, ocf_q=63.9, rev_q=341.9, gpu=0,
            leases=106.8, oplc_q=6.5, m24=300, Q=10, A5=1),
   m24Lbl="FY27 $0.1bn + FY28 $0.2bn (to May 2028) · Reported", undrawnLbl="Revolver $0.35bn · Reported",
-  pf=dict(items=["No post-quarter financing in the 7 Oct 10-Q or later 8-Ks"]),
+  pf=dict(items=["$300m 364-day senior secured bridge DDTL for Delta Forge 1, SOFR+300bp, closed 23 Nov 2026 (Mgmt press release; no 8-K yet) - draws conditional on construction milestones, rate approvals, lender consents and covenants, so not counted"], src=["apldBridge"]),
   A5Lbl="BB- on secured notes (issue-level) → 2 − 1 = 1",
   mkt=dict(spread=352, worst=8.85, worstLbl="7.00% Jun 2031", cds=None, src=["aiTracker"]),
   prepay=dict(pct=None, txt="n/a - prepayments not disclosed"),
