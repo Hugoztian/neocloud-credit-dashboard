@@ -114,7 +114,7 @@ PUB = [
    ("Potential revenue","~$36bn base-term lease value ≈ ~$2.4bn/yr at full ramp over ~15 years · Calc from Mgmt figure",["apldQ"]),
    ("EBITDA & interest","Quarter revenue $341.9m, adj. EBITDA $64.4m, interest $77.4m · Reported",["apldQ"]),
    ("Maturity wall","Fiscal years to May: FY27 $0.1bn · FY28 $0.2bn · FY29 $0.3bn · FY30 $0.4bn · FY31 $4.3bn · later $1.4bn · Reported",["apldQ"]),
-   ("Liquidity","Unrestricted cash $2.95bn (restricted $0.73bn excluded) + undrawn revolver $0.35bn · Reported. Post-quarter: $300m 364-day bridge DDTL for Delta Forge 1 (SOFR+300bp, closed 23 Nov 2026) - draws conditional on milestones, rate approvals and lender consents, so not counted · Mgmt",["apldQ","apldBridge"]),
+   ("Liquidity","Unrestricted cash $2.95bn (restricted $0.73bn excluded) + undrawn revolver $0.35bn · Reported. Post-quarter: $300m 364-day bridge DDTL for Delta Forge 1 (SOFR+300bp, closed 23 Nov 2026) - draws conditional on milestones, rate approvals and lender consents, so not counted · Mgmt. Series G convertible preferred (PEPA) commitment raised to $2.5bn on 24 Nov 2026 with $1,035m available - equity capacity, not counted · Reported (8-K)",["apldQ","apldBridge","apld8kPepa"]),
    ("Ratings","BB- on secured notes · News/agency",["handoff"]),
    ("Counterparty quality","CoreWeave (Ba3/B+, CDS >1,100bp) anchors Polaris Forge 1 (400 MW of ~1.41 GW leased); the rest IG hyperscalers · Mgmt → 10/15 (was 15/15) · Calc",["apldQ","cnbcCds"]),
    ("Nvidia / upstream","No direct Nvidia support; exposed to CoreWeave as tenant",["apldQ"]),

@@ -102,6 +102,16 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 
 # ---------- What's new (rolling 7 days) ----------
 news = [
+ dict(date="2026-11-24", co="CRWV", tag="News", h="CoreWeave bonds hit record lows: 9.75% 2031 yield tops 17% and 5-yr CDS widens 8.5% to over 1,200bp as the Huang-reinstatement rally reverses",
+      d="Trace prices (Investing.com): 9% 2031 at 76.4, 9.625% 2032 at 74.9, 9.75% 2031 at 76.3, 9.25% 2030 at 80.9 - each its lowest since issue; stock -13%. Stifel: no quick reversion to broad Nvidia customer financing expected. Market input in the score still uses the 19 Nov tracker (9.75% 2031 at 15.64%, spread 1,051bp); already in the lowest market bucket, so the score is unchanged.", src=["cnbcCredit","invCrwvBonds","aiTracker"]),
+ dict(date="2026-11-24", co="APLD", tag="Reported", h="Applied Digital 8-K: Series G convertible preferred (PEPA) commitment raised to $2.5bn from $2.0bn, leaving $1,035m available; 23 Nov lease and bridge releases furnished",
+      d="Letter agreement signed 24 Nov with the PEPA investors (private placement, Section 4(a)(2)). Preferred equity capacity, not debt or cash, so not counted in liquidity; the $300m bridge DDTL is still excluded (conditional draws). Headline inputs unchanged.", src=["apld8kPepa","apldBridge"]),
+ dict(date="2026-11-24", co="Neoclouds", tag="News", h="HPE CEO: HPE Financial Services 'has not provided financing to neocloud or high-risk customers'; CoreWeave -13%, Nebius -11%, SpaceX -4%; TeraWulf hits a 52-week low",
+      d="Said on HPE's Q4 call on 23 Nov (ET); Neri also flagged memory and flash supply limits possibly into 2H 2028. TeraWulf traded as low as $9.43 after B. Riley cut its target to $22. A reminder that vendor financing is not a funding source for the GPU neoclouds in the set; credit inputs unchanged.", src=["yhHpe","tipHpe","mbWulf"]),
+ dict(date="2026-11-24", co="Nscale", tag="News", h="FT: Nscale CEO tells staff it has enough capital to stay private for the foreseeable future as the sell-off threatens its $35bn IPO",
+      d="No price range has been set and no new S-1 amendment is on EDGAR since 23 Nov. The 12 Nov S-1/A still says more financing is needed for 2027 commitments (debt $5.5bn at 30 Sep); staying private shifts that need to private debt and equity.", src=["nqNscl","rtNscl","nsclS1"]),
+ dict(date="2026-11-24", co="Fluidstack", tag="Mgmt", h="Fluidstack launches 'Blackbird', a modular 400 MW data-centre product targeting six-month builds, from a new plant in Glendale, Arizona",
+      d="Modules scale from 10+ MW zones to 400 MW; the company targets builds within six months of groundbreaking vs 18-24 months typical. No financing terms or customers disclosed; capacity and funding inputs for Fluidstack unchanged.", src=["fsBlackbird"]),
  dict(date="2026-11-23", co="Nvidia", tag="Reported", h="Nvidia board reinstates Jensen Huang as CEO, effective immediately; Kress stays CFO (8-K, 23 Nov)",
       d="Board cites input from senior US government officials; the independent committee's investigation continues and a National Security and Export Control Committee was formed. Neocloud equities rallied on the day: CoreWeave +22%, IREN +24%, Nebius +20%, Oracle +12% at the close (News). Nvidia's $32bn conditional neocloud commitments are unchanged; Q3 FY27 10-Q still not filed. Credit inputs unchanged.", src=["nvda8kCeo","cnbcHuang","mwNeo"]),
  dict(date="2026-11-23", co="APLD", tag="Mgmt", h="Applied Digital signs a 150 MW, 18-year lease with a tier-one IG hyperscaler (~$5.4bn base term) and closes a $300m 364-day bridge DDTL for Delta Forge 1",
@@ -148,15 +158,15 @@ earlier = [
  dict(date="2026-11-04", h="Oracle issues $10bn notes (7.000%-8.650%) and 86.2m shares; TeraWulf secures Google credit backstop", src=["orcl8k","wulfGoog"]),
 ]
 upcoming = [
- dict(when="24 Nov 2026, 4:30pm ET (25 Nov 05:30 SGT)", what="IREN annual general meeting (virtual)", kind="Governance", src=["irenProxy"]),
- dict(when="25 Nov 2026", what="BEA second estimate of Q3 GDP (denominator for the scale score)", kind="Macro", src=["beaQ3"]),
+ dict(when="25 Nov 2026, 8:30am ET (21:30 SGT)", what="BEA second estimate of Q3 GDP (denominator for the scale score)", kind="Macro", src=["beaQ3"]),
+ dict(when="By ~1 Dec 2026", what="IREN 8-K with 24 Nov AGM vote results (incl. share-settlement approvals for its prepaid forwards and capped calls); not yet on EDGAR", kind="Governance", src=["irenProxy"]),
  dict(when="Rest of 2026", what="CoreWeave principal due: $2.4bn", kind="Maturity", src=["crwvQ"]),
  dict(when="Rest of 2026", what="Galaxy 2026 exchangeable notes (~$0.45bn) mature", kind="Maturity", src=["glxyQ"]),
  dict(when="By ~9 Dec 2026", what="WhiteFiber NC-1 $200m initial term-loan funding window (30 days from 9 Nov close; two 30-day extensions allowed)", kind="Deal closing", src=["wyfi8k"]),
  dict(when="8-9 Dec 2026", what="FOMC decision (Waller floated +50bp)", kind="Macro", src=["fomc","cnbcWaller"]),
  dict(when="~14 Dec 2026 (est., unconfirmed)", what="Oracle Q2 FY27 results", kind="Earnings", src=["orclDate"]),
  dict(when="Coming weeks", what="Nvidia Q3 FY27 10-Q (neocloud commitment detail); OpenAI round's remaining up to ~$9bn", kind="Filing / funding", src=["cnbcNvda","bbgOai"]),
- dict(when="Before YE 2026 (target)", what="Nscale IPO (price range not yet set)", kind="Deal closing", src=["axiosNscl","nsclS1"]),
+ dict(when="Before YE 2026 (target; at risk)", what="Nscale IPO (price range not yet set; CEO says it can stay private - FT, 24 Nov)", kind="Deal closing", src=["axiosNscl","nsclS1","nqNscl"]),
  dict(when="Q4 2026", what="Cipher Barber Lake first delivery; TeraWulf CB-4; Applied Digital Polaris Forge 2 initial ops; Lambda $4bn round", kind="Delivery / funding", src=["cifrQ","wulfDeck","apldQ","tcLambda"]),
  dict(when="19 Jan 2027", what="Comment deadline on the US remote-access chip rule (already in effect since 19 Nov)", kind="Policy", src=["bisRemote"]),
  dict(when="Q1 2027 (target)", what="Applied Digital project finance for Delta Forge 1 and Polaris Forge 3 (Delta Forge 2 in Q2 2027); takes out the $300m bridge", kind="Financing", src=["apldLease","apldBridge"]),
