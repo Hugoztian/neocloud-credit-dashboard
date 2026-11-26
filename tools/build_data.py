@@ -102,6 +102,18 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 
 # ---------- What's new (rolling 7 days) ----------
 news = [
+ dict(date="2026-11-25", co="CRWV", tag="News", h="CoreWeave 5-yr CDS jumps by the most ever to a record 1,314bp (~68% implied 5-yr default probability); Oct 2031 notes fall to 74.23 (17.91% yield), shares -10%",
+      d="Jun 2030 notes at a record-low 76.55 (Tradeweb via Reuters); the 9% 2031s traded near 18% (Trace). Score market input still uses the 19 Nov tracker (spread 1,051bp) - already in the lowest market bucket, so the score is unchanged. Separately, Forms 4 filed 24 Nov (ET) show eight officers incl. the CEO and CFO sold ~57k shares at ~$42.28 on 20 Nov to cover RSU tax withholding (Reported) - not discretionary sales.", src=["invCrwvCds","invCrwv1791","bbgCrwvLoan","crwv4Rsu"]),
+ dict(date="2026-11-25", co="CRWV", tag="News", h="Bloomberg: Morgan Stanley and MUFG to launch a $4.5bn GPU-secured, Meta-backed delayed-draw loan for CoreWeave as soon as next week; IG ratings expected, initial talk 7-7.5%",
+      d="Proceeds go into escrow to fund GPUs for the Dalton, Georgia site (Core Scientific-hosted); amortising; indications of interest already cover the size. Existing CoreWeave DDTLs trade around par while the unsecured 2031s yield ~18% - the market is pricing contract-backed project debt and corporate debt very differently. Not signed, so not counted in liquidity; added as a pro-forma watch item.", src=["bbgCrwvLoan","crwvPr"]),
+ dict(date="2026-11-25", co="ORCL", tag="News", h="Oracle 5-yr CDS hits a record 356bp (+17bp); Alphabet and SpaceX CDS also at records; SoftBank above 500bp; Oracle shares -5% to below the $116 November equity-offering price",
+      d="Oracle CDS was below 80bp a year ago. Score market input uses bond spreads (6.85% 2066 at 318bp), unchanged; Baa2 (negative) / BBB- / BBB ratings unchanged. SpaceX CDS level not reported.", src=["saCds","siOrcl","rtAiSlide"]),
+ dict(date="2026-11-25", co="Neoclouds", tag="News", h="Sell-off resumes: Nasdaq down ~3-4%, Nvidia -4.6%; IREN -11.7% to a 52-week low ($11.34), Core Scientific at a 52-week low, TeraWulf -8.7%, Nebius ~-6%, Cipher -5.5%",
+      d="The Huang-reinstatement rally of 23 Nov has fully reversed. IREN's ~$6bn unfunded FY27 capex and the slipped >$4bn ARR target (Mgmt, 5 Nov) are the company-specific overhangs. Equity weakness raises the cost of ATM/convertible funding; no new filings, credit inputs unchanged.", src=["rtAiSlide","invIren","mbCorz"]),
+ dict(date="2026-11-25", co="Macro", tag="Reported", h="BEA second estimate: Q3 real GDP +4.3% (from 3.4%); nominal GDP $33,056.2bn SAAR (from $33,010.0bn) - denominator in the AI vs 2008 scale test updated",
+      d="Upward revision led by investment (software, equipment +21.8%) and consumer spending; core PCE 2.5% unchanged. The AI-debt-to-GDP ratios move by ~0.01pt or less (rounded 3.6% and 7.3% unchanged); scale score unchanged. Third estimate due 23 Dec.", src=["beaQ3","fredQ3"]),
+ dict(date="2026-11-24", co="HUT", tag="Mgmt", h="Hut 8: Texas TCEQ authorization for Beacon Point Phase 2 clears the full 1 GW campus for construction; Phase 2 site preparation under way",
+      d="Phase 2 (352 MW IT, ~$9.8bn base-term lease, extended to 17 years) still needs project financing, which management links to the ERCOT grid review (audit results expected 10 Dec, unconditional base-load classification 17 Dec) and expects to raise without equity or parent-recourse debt. Phase 1 is funded by the $4.25bn 6.129% 2042 project notes; initial 700 MW of campus utility capacity to be energised in Q1 2027 (Mgmt).", src=["hutTceq","bsHut","hutQ"]),
  dict(date="2026-11-24", co="CRWV", tag="News", h="CoreWeave bonds hit record lows: 9.75% 2031 yield tops 17% and 5-yr CDS widens 8.5% to over 1,200bp as the Huang-reinstatement rally reverses",
       d="Trace prices (Investing.com): 9% 2031 at 76.4, 9.625% 2032 at 74.9, 9.75% 2031 at 76.3, 9.25% 2030 at 80.9 - each its lowest since issue; stock -13%. Stifel: no quick reversion to broad Nvidia customer financing expected. Market input in the score still uses the 19 Nov tracker (9.75% 2031 at 15.64%, spread 1,051bp); already in the lowest market bucket, so the score is unchanged.", src=["cnbcCredit","invCrwvBonds","aiTracker"]),
  dict(date="2026-11-24", co="APLD", tag="Reported", h="Applied Digital 8-K: Series G convertible preferred (PEPA) commitment raised to $2.5bn from $2.0bn, leaving $1,035m available; 23 Nov lease and bridge releases furnished",
@@ -120,8 +132,6 @@ news = [
       d="Bloomberg-sourced: 69-month bond and bank loan, bond yield ~8%, loan ~523bp over the benchmark; BBB from at least two agencies; proceeds for Nvidia GB300s in Indonesia (with DayOne). 912 MW pipeline, 46 MW built. Not in the coverage set; a read on pricing for GPU-backed neocloud debt.", src=["dcdFirmus","zbFirmus"]),
  dict(date="2026-11-22", co="Nscale", tag="News", h="Observer: Nscale's IPO hopes dim as its ByteDance-linked sales draw scrutiny under tightening US chip rules",
       d="Singapore-based ByteDance unit Spring at one point accounted for 73% of sales; the updated S-1 lists 'potential exposure' to a supplier with reported links to a blacklisted company. Nscale declined to comment (IPO quiet period). Adds to the IPO and 2027 funding risk already flagged.", src=["obsNscl","nsclS1"]),
- dict(date="2026-11-19", co="Policy", tag="Reported", h="US Commerce interim final rule on remote access: licences for data centres serving China-headquartered firms at scale, and for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil",
-      d="Effective 19 Nov 2026 (comments due 19 Jan 2027). Licence needed to supply chips to any data centre giving >12m aggregate TPP to D:5/Macau-headquartered companies; the five-country licence does not apply to US-headquartered end users that report. Most relevant to neoclouds with Asian footprints (CoreWeave entered Indonesia in Q3; Nebius has Singapore customers) and to Nscale.", src=["bisRemote","wsSea"]),
  dict(date="2026-11-22", co="Supply chain", tag="News", h="FT: Dell, HPE, Lenovo and Supermicro seek 20-45% more on signed AI-server contracts before delivery as memory costs soar",
       d="Memory prices up >400% since early 2024 (JPMorgan, cited by FT); GPU-server prices up at least 20-30% per one source. XTX Markets is suing Dell in Ireland over a demanded extra $62-70m on a $549m fixed-price order. Upside risk to capex per MW for GPU neoclouds; no company in the set has quantified an impact.", src=["ftServer"]),
  dict(date="2026-11-20", co="Neoclouds", tag="News", h="Sector sell-off deepens: IREN -16%, Applied Digital and Core Scientific -12%, TeraWulf -10% intraday in a broad tech sell-off",
@@ -138,6 +148,7 @@ news = [
       d="Key end-customer for Fluidstack (TeraWulf, Cipher, Hut 8 sites), Nscale (up to $44.6bn) and Lambda. Lambda's ~$34.9bn agreement remains terminable by either party; neither had given notice as of the 18 Nov prospectus.", src=["antIpo","jaLambda"]),
 ]
 earlier = [
+ dict(date="2026-11-19", h="US remote-access interim final rule: licences for chips to Indonesia, Malaysia, Singapore, Thailand and Brazil and for DCs serving China-HQ firms at scale (comments due 19 Jan 2027)", src=["bisRemote","wsSea"]),
  dict(date="2026-11-18", h="CoreWeave co-founder McBee: cash goes to compute, not buying back ~15%-yield bonds; ~130,000 GPUs come off contract in 2027", src=["sfMcBee","foolCrwv","crwvQ"]),
  dict(date="2026-11-18", h="CoreWeave 5-yr CDS 1,100-1,200bp and 2031s near 16%; Oracle CDS above 300bp; first AI-CDS ETFs filed", src=["cnbcCds","invCrwv"]),
  dict(date="2026-11-18", h="Nvidia cuts neocloud commitments to $32bn (from $36bn), effective only once financing is secured and capacity deployed", src=["cnbcNvda","tcNvda"]),
@@ -154,16 +165,18 @@ earlier = [
  dict(date="2026-11-04", h="Oracle issues $10bn notes (7.000%-8.650%) and 86.2m shares; TeraWulf secures Google credit backstop", src=["orcl8k","wulfGoog"]),
 ]
 upcoming = [
- dict(when="25 Nov 2026, 8:30am ET (21:30 SGT)", what="BEA second estimate of Q3 GDP (denominator for the scale score)", kind="Macro", src=["beaQ3"]),
  dict(when="By ~1 Dec 2026", what="IREN 8-K with 24 Nov AGM vote results (incl. share-settlement approvals for its prepaid forwards and capped calls); not yet on EDGAR", kind="Governance", src=["irenProxy"]),
+ dict(when="As soon as week of 30 Nov 2026", what="CoreWeave $4.5bn Meta-backed GPU DDTL launch (Morgan Stanley/MUFG; IG ratings expected, 7-7.5% talk)", kind="Financing", src=["bbgCrwvLoan"]),
  dict(when="Rest of 2026", what="CoreWeave principal due: $2.4bn", kind="Maturity", src=["crwvQ"]),
  dict(when="Rest of 2026", what="Galaxy 2026 exchangeable notes (~$0.45bn) mature", kind="Maturity", src=["glxyQ"]),
  dict(when="By ~9 Dec 2026", what="WhiteFiber NC-1 $200m initial term-loan funding window (30 days from 9 Nov close; two 30-day extensions allowed)", kind="Deal closing", src=["wyfi8k"]),
  dict(when="8-9 Dec 2026", what="FOMC decision (Waller floated +50bp)", kind="Macro", src=["fomc","cnbcWaller"]),
+ dict(when="10 & 17 Dec 2026", what="Hut 8 Beacon Point: ERCOT audit results (10 Dec) and unconditional base-load classification (17 Dec); gates Phase 2 project financing", kind="Financing", src=["bsHut"]),
  dict(when="~14 Dec 2026 (est., unconfirmed)", what="Oracle Q2 FY27 results", kind="Earnings", src=["orclDate"]),
  dict(when="Coming weeks", what="Nvidia Q3 FY27 10-Q (neocloud commitment detail); OpenAI round's remaining up to ~$9bn", kind="Filing / funding", src=["cnbcNvda","bbgOai"]),
  dict(when="Before YE 2026 (target; at risk)", what="Nscale IPO (price range not yet set; CEO says it can stay private - FT, 24 Nov)", kind="Deal closing", src=["axiosNscl","nsclS1","nqNscl"]),
  dict(when="Q4 2026", what="Cipher Barber Lake first delivery; TeraWulf CB-4; Applied Digital Polaris Forge 2 initial ops; Lambda $4bn round", kind="Delivery / funding", src=["cifrQ","wulfDeck","apldQ","tcLambda"]),
+ dict(when="23 Dec 2026", what="BEA third estimate of Q3 GDP (denominator for the scale score)", kind="Macro", src=["beaQ3","fredQ3"]),
  dict(when="19 Jan 2027", what="Comment deadline on the US remote-access chip rule (already in effect since 19 Nov)", kind="Policy", src=["bisRemote"]),
  dict(when="Q1 2027 (target)", what="Applied Digital project finance for Delta Forge 1 and Polaris Forge 3 (Delta Forge 2 in Q2 2027); takes out the $300m bridge", kind="Financing", src=["apldLease","apldBridge"]),
  dict(when="Early Jan 2027 (date n/a)", what="Applied Digital FQ2 FY27 results (quarter to 30 Nov)", kind="Earnings", src=["apldQ"]),
@@ -174,7 +187,7 @@ upcoming = [
 ]
 
 # ---------- AI vs 2008 ----------
-GDP07 = 14474.2; GDP26 = 33010.0; MORT07 = 11079.9; SUB07 = 1200.0
+GDP07 = 14474.2; GDP26 = 33056.2; MORT07 = 11079.9; SUB07 = 1200.0
 AI_CORE = 1200.0      # JPMorgan est. AI-company-issued debt (via Chicago Fed, Feb 2026)
 AI_LEASE = 1200.0     # Moody's hyperscaler DC lease commitments by mid-2026 (via BIS Bulletin 140)
 ratio = lambda a, g: round(100*a/g, 1)
@@ -264,7 +277,7 @@ claims = [
  dict(c="Broadcom $63bn SPV", st="Confirmed", v="$63bn SPV (BofA, Citi, Morgan Stanley first lien; Blackstone second lien) buys Broadcom XPU racks to lease to Anthropic; Broadcom residual value support, max ~$43bn (8-K)", src=["avgoPr","avgo8k"]),
  dict(c="Van Nieuwerburgh ~$1.4tn AI DC debt estimate", st="Corrected", v="The NBER paper estimates ~$9.0tn of US AI DC investment 2025-32 (3.2% of GDP a year), not debt. The '$1.4tn of debt issued to date' is an informal tally quoted at a Brookings event, not a paper estimate; not used in the scale score", src=["nber","brook"]),
  dict(c="Lambda ~$20bn Nvidia lease guarantees", st="Unverifiable", v="Only The Information (paywalled) reports it; it does not fit Nvidia's disclosed $118bn guarantee breakdown. Shown as unverified News on Lambda's card; excluded from calculations", src=["infoLambda","ttNvda"]),
- dict(c="AI debt 4.3% of GDP vs subprime 9.0%", st="Corrected", v=f"{sp[2]['pct']}% (JPMorgan ~$1.2tn ÷ Q3 2026 GDP $33.0tn) vs {sp[1]['pct']}% (subprime ~$1.2tn ÷ 2007 GDP $14.47tn). Using the $1.4tn informal tally would give ~4.2%; 9.0% would need ~$1.3tn of subprime", src=["chiFed","fredQ3","gorton","fredGdpa"]),
+ dict(c="AI debt 4.3% of GDP vs subprime 9.0%", st="Corrected", v=f"{sp[2]['pct']}% (JPMorgan ~$1.2tn ÷ Q3 2026 GDP $33.1tn, BEA second estimate) vs {sp[1]['pct']}% (subprime ~$1.2tn ÷ 2007 GDP $14.47tn). Using the $1.4tn informal tally would give ~4.2%; 9.0% would need ~$1.3tn of subprime", src=["chiFed","fredQ3","gorton","fredGdpa"]),
 ]
 
 
@@ -359,7 +372,7 @@ edgar = dict(checked=now.strftime("%d %b %Y %H:%M SGT"),
   src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144","nvda8kCeo"])
 
 out = dict(
-  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="25 Nov 2026",
+  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="26 Nov 2026",
   sources=S, companies=companies, agg=agg, cost=cost, news=news, earlier=earlier, upcoming=upcoming,
   scale=scale, sim=dict(factors=sim, score=simScore), telecom=telecom, verdict=verdict, macro=macro,
   discrepancies=discrepancies, claims=claims, gaps=gaps, edgar=edgar,
