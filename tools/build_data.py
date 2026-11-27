@@ -102,6 +102,16 @@ cost = [  # coupon/effective (Reported) or market yield (News)
 
 # ---------- What's new (rolling 7 days) ----------
 news = [
+ dict(date="2026-11-25", co="Financing market", tag="News", h="Bloomberg: US chip-access curbs stall billions of Asia data-centre loans - Bridge Data Centres' $6.6bn loan delayed, Digital Halo ($372m) and Aolani ($480m) loans reassessed",
+      d="Lenders incl. Citi, Standard Chartered and Singapore's major banks are reviewing data-centre clients; UOB is seeking a ~$1bn significant risk transfer that includes data-centre loans, and banks selling down exposure are struggling to find buyers. Data centres already leasing significant compute to China-HQ firms have 90 days to obtain a licence. Read-across: Nscale's ByteDance-linked revenue and any Asia-facing capacity; no company in the set has disclosed an impact.", src=["bbgAsiaLoans","bisRemote"]),
+ dict(date="2026-11-25", co="ORCL", tag="News", h="Breakingviews: banks trim Oracle-linked data-centre loans - HSBC sold $300m of the $18bn Project Jupiter loan at ~85, ING auctioned ~$500m of loans, SocGen marketing $300m tied to Oracle's Texas and Wisconsin sites",
+      d="Oracle sent the Jupiter developer a force-majeure notice in late September after power delays, extending the lower construction-stage rent period, so lenders' repayment stream may arrive later. These are project-level loans backed by Oracle leases, not Oracle debt; Oracle's inputs and ratings are unchanged.", src=["bvBanks"]),
+ dict(date="2026-11-25", co="GLXY", tag="Reported", h="Galaxy insiders buy on the dip: CEO Novogratz buys 86,913 shares at ~$10.99 (~$0.96m, indirect) and CFO Paquette 25,000 at ~$10.74 (Forms 4)",
+      d="Open-market purchases (code P) on 25 Nov; a third officer's filing is a SAR exercise with tax withholding. Equity signal only; Galaxy's Helios lease remains 100% CoreWeave-tenanted, so its credit read-across is CoreWeave's record CDS. Credit inputs unchanged.", src=["glxy4Buy","invCrwvCds"]),
+ dict(date="2026-11-24", co="APLD", tag="Mgmt", h="Applied Digital: first 25 MW hall at Polaris Forge 2 (Harwood, ND) Ready for Service on schedule; base-build of the first 75 MW commissioned",
+      d="First delivery for the IG hyperscaler's 200 MW Polaris Forge 2 lease, so about 275 MW is now ready for service (250 MW at Polaris Forge 1, all CoreWeave). The remaining 50 MW of the phase moves to fit-out. Capacity updated; quarter-end credit inputs unchanged.", src=["apldPf2","apldQ"]),
+ dict(date="2026-11-24", co="IREN", tag="News", h="IREN AGM: shareholders approve all six proposals (preliminary), incl. share settlement of the prepaid forwards and capped calls; final results 8-K due within four business days",
+      d="Chair Bartholomew also defended the co-CEO equity grants (RSUs, four-year vest plus holding period). The 8-K was not on EDGAR at the 27 Nov check (US Thanksgiving 26 Nov). Credit inputs unchanged.", src=["trIrenAgm","irenProxy"]),
  dict(date="2026-11-25", co="CRWV", tag="News", h="CoreWeave 5-yr CDS jumps by the most ever to a record 1,314bp (~68% implied 5-yr default probability); Oct 2031 notes fall to 74.23 (17.91% yield), shares -10%",
       d="Jun 2030 notes at a record-low 76.55 (Tradeweb via Reuters); the 9% 2031s traded near 18% (Trace). Score market input still uses the 19 Nov tracker (spread 1,051bp) - already in the lowest market bucket, so the score is unchanged. Separately, Forms 4 filed 24 Nov (ET) show eight officers incl. the CEO and CFO sold ~57k shares at ~$42.28 on 20 Nov to cover RSU tax withholding (Reported) - not discretionary sales.", src=["invCrwvCds","invCrwv1791","bbgCrwvLoan","crwv4Rsu"]),
  dict(date="2026-11-25", co="CRWV", tag="News", h="Bloomberg: Morgan Stanley and MUFG to launch a $4.5bn GPU-secured, Meta-backed delayed-draw loan for CoreWeave as soon as next week; IG ratings expected, initial talk 7-7.5%",
@@ -134,20 +144,14 @@ news = [
       d="Singapore-based ByteDance unit Spring at one point accounted for 73% of sales; the updated S-1 lists 'potential exposure' to a supplier with reported links to a blacklisted company. Nscale declined to comment (IPO quiet period). Adds to the IPO and 2027 funding risk already flagged.", src=["obsNscl","nsclS1"]),
  dict(date="2026-11-22", co="Supply chain", tag="News", h="FT: Dell, HPE, Lenovo and Supermicro seek 20-45% more on signed AI-server contracts before delivery as memory costs soar",
       d="Memory prices up >400% since early 2024 (JPMorgan, cited by FT); GPU-server prices up at least 20-30% per one source. XTX Markets is suing Dell in Ireland over a demanded extra $62-70m on a $549m fixed-price order. Upside risk to capex per MW for GPU neoclouds; no company in the set has quantified an impact.", src=["ftServer"]),
- dict(date="2026-11-20", co="Neoclouds", tag="News", h="Sector sell-off deepens: IREN -16%, Applied Digital and Core Scientific -12%, TeraWulf -10% intraday in a broad tech sell-off",
-      d="IREN: >$4bn ARR target slipped to Jan-Feb 2027 and ~$6bn of FY27 capex still unfunded (Mgmt, 5 Nov). Equity weakness raises the cost of the ATM/convertible funding several names rely on; credit inputs and scores are unchanged (no new filings).", src=["saIren","wsAiInfra","tikrIren"]),
- dict(date="2026-11-20", co="Policy", tag="News", h="Trump threatens a 'tremendous tax' on US companies building AI data centres abroad",
-      d="No rate, mechanism or effective date given; taxes need Congress. Watch for US hyperscaler demand for overseas capacity (Nebius, Nscale, Fluidstack, CoreWeave Europe).", src=["cnbcTrumpDc"]),
- dict(date="2026-11-20", co="SPCX", tag="News", h="Apollo and Goldman price ~$44bn of senior and subordinated notes for SpaceX's Saturn GPU lease vehicle - 'largest GPU financing to date'",
-      d="Oversubscribed and upsized; anchors BlackRock, Goldman Sachs Asset Management and KKR-advised accounts. Funds Nvidia Vera Rubin GPUs; lease schedules start on delivery in H1 2027. SpaceX's own 8-K (26 Oct) sizes the Apollo master finance lease at ~$40bn; a finance lease comes on balance sheet at commencement.", src=["rtSaturn","spcx8kLease"]),
- dict(date="2026-11-20", co="ORCL", tag="Mgmt", h="Oracle says its OpenAI contract is fully funded, including vendor financing",
-      d="Targets positive FCF in 2H FY28 and >$30bn FCF in FY29. Follows the 4 Nov $10bn notes (7.000%-8.650%) and 86.2m-share equity offering (8-K).", src=["orclStmt","orcl8k"]),
- dict(date="2026-11-20", co="CRWV", tag="News", h="CoreWeave falls 12% to $39.46, below its $40 IPO price; Huang Foundation's $350m CoreWeave compute commitment revives circular-financing concerns",
-      d="New 52-week low $39.28. Foundation has spent $108.3m of the $350m. Seven Form 144 insider-sale notices filed on EDGAR the same day.", src=["saCrwv","yhHuang","crwv144"]),
- dict(date="2026-11-20", co="Counterparty", tag="News", h="Anthropic closes IPO: ~$93.5bn gross ($91.6bn to the company) plus a $26.0bn concurrent private placement",
-      d="Key end-customer for Fluidstack (TeraWulf, Cipher, Hut 8 sites), Nscale (up to $44.6bn) and Lambda. Lambda's ~$34.9bn agreement remains terminable by either party; neither had given notice as of the 18 Nov prospectus.", src=["antIpo","jaLambda"]),
 ]
 earlier = [
+ dict(date="2026-11-20", h="Sector sell-off: IREN -16%, Applied Digital and Core Scientific -12%, TeraWulf -10% intraday; IREN's >$4bn ARR target slipped to Jan-Feb 2027", src=["saIren","wsAiInfra","tikrIren"]),
+ dict(date="2026-11-20", h="Trump threatens a 'tremendous tax' on US companies building AI data centres abroad (no rate or mechanism)", src=["cnbcTrumpDc"]),
+ dict(date="2026-11-20", h="Apollo and Goldman price ~$44bn of notes for SpaceX's Saturn GPU lease vehicle (8-K sizes the master lease at ~$40bn)", src=["rtSaturn","spcx8kLease"]),
+ dict(date="2026-11-20", h="Oracle says its OpenAI contract is fully funded, incl. vendor financing; targets positive FCF in 2H FY28", src=["orclStmt","orcl8k"]),
+ dict(date="2026-11-20", h="CoreWeave falls below its $40 IPO price; Huang Foundation's $350m compute commitment revives circular-financing concerns; seven Form 144s filed", src=["saCrwv","yhHuang","crwv144"]),
+ dict(date="2026-11-20", h="Anthropic closes ~$93.5bn IPO plus $26.0bn private placement; Lambda's ~$34.9bn agreement still terminable", src=["antIpo","jaLambda"]),
  dict(date="2026-11-19", h="US remote-access interim final rule: licences for chips to Indonesia, Malaysia, Singapore, Thailand and Brazil and for DCs serving China-HQ firms at scale (comments due 19 Jan 2027)", src=["bisRemote","wsSea"]),
  dict(date="2026-11-18", h="CoreWeave co-founder McBee: cash goes to compute, not buying back ~15%-yield bonds; ~130,000 GPUs come off contract in 2027", src=["sfMcBee","foolCrwv","crwvQ"]),
  dict(date="2026-11-18", h="CoreWeave 5-yr CDS 1,100-1,200bp and 2031s near 16%; Oracle CDS above 300bp; first AI-CDS ETFs filed", src=["cnbcCds","invCrwv"]),
@@ -165,7 +169,7 @@ earlier = [
  dict(date="2026-11-04", h="Oracle issues $10bn notes (7.000%-8.650%) and 86.2m shares; TeraWulf secures Google credit backstop", src=["orcl8k","wulfGoog"]),
 ]
 upcoming = [
- dict(when="By ~1 Dec 2026", what="IREN 8-K with 24 Nov AGM vote results (incl. share-settlement approvals for its prepaid forwards and capped calls); not yet on EDGAR", kind="Governance", src=["irenProxy"]),
+ dict(when="By ~1 Dec 2026", what="IREN 8-K with final 24 Nov AGM vote results (all six proposals passed on preliminary results, incl. share settlement of the prepaid forwards and capped calls); not yet on EDGAR", kind="Governance", src=["irenProxy","trIrenAgm"]),
  dict(when="As soon as week of 30 Nov 2026", what="CoreWeave $4.5bn Meta-backed GPU DDTL launch (Morgan Stanley/MUFG; IG ratings expected, 7-7.5% talk)", kind="Financing", src=["bbgCrwvLoan"]),
  dict(when="Rest of 2026", what="CoreWeave principal due: $2.4bn", kind="Maturity", src=["crwvQ"]),
  dict(when="Rest of 2026", what="Galaxy 2026 exchangeable notes (~$0.45bn) mature", kind="Maturity", src=["glxyQ"]),
@@ -358,6 +362,7 @@ discrepancies = [
  dict(t="CoreWeave capex", d="Q3 cash capex is $9.44bn (10-Q cash flow); a $14.5bn figure circulating is not in the 10-Q or 8-K. Accrual-basis additions are higher ($11.8bn unpaid PP&E liabilities).", s="Filing used", src=["crwvQ"]),
  dict(t="Van Nieuwerburgh '$1.4tn debt'", d="The NBER paper's estimate is ~$9.0tn of investment, not debt; the $1.4tn debt figure is an informal tally from a Brookings event.", s="Corrected", src=["nber","brook"]),
  dict(t="Lambda '$20bn Nvidia guarantees'", d="Reported only by The Information; inconsistent with Nvidia's $118bn guarantee breakdown. Unverified, excluded from calculations.", s="Unverified", src=["infoLambda","ttNvda"]),
+ dict(t="CoreWeave GPUs up for 2027 renewal", d="Co-founder McBee (Bloomberg, 18 Nov): ~130,000 GPUs come off contract in 2027. Wells Fargo's note after meeting management (20 Nov): 170,000 GPUs up for renewal in 2027 (~2/3 Hopper, ~1/3 Blackwell), ~$4bn ARR from re-contracting at current rates. Neither is in a filing; not used in calculations.", s="Open", src=["sfMcBee","wfCrwv"]),
  dict(t="Oracle capex guide", d="FY27 capex of $90-95bn is from news, not the 10-Q.", s="News-only", src=["handoff"]),
 ]
 gaps = ("Not disclosed: active MW for Nebius, IREN, Oracle, Cipher and Hut 8; Galaxy dollar backlog; Nscale financing costs, maturities, capex and interest; "
@@ -367,12 +372,12 @@ gaps = ("Not disclosed: active MW for Nebius, IREN, Oracle, Cipher and Hut 8; Ga
 
 edgar = dict(checked=now.strftime("%d %b %Y %H:%M SGT"),
   result=("EDGAR submissions checked for all 13 SEC registrants. No 10-Q/10-K/20-F/6-K newer than the handoff. Newer filings incorporated: "
-          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). Re-checked 23 Nov 2026: nothing newer than 20 Nov for any registrant (weekend). Re-checked 24 Nov 2026: Nvidia 8-K Item 5.02 (23 Nov, Huang reinstated as CEO) is the only new 8-K; no new 10-Q/10-K/20-F/6-K or 424B for any registrant; Nvidia's Q3 FY27 10-Q still not filed; no Applied Digital 8-K yet for its 23 Nov lease and bridge facility (press releases used, Mgmt). "
+          "Oracle 8-K (4 Nov 2026, $10bn notes + $10bn equity), Nebius 6-K (22 Oct, Citi facility), TeraWulf 8-K (23 Oct, revolver), SpaceX 8-K (26 Oct, GPU finance lease), WhiteFiber 10-Q and 8-Ks (3 and 10 Nov 2026), CoreWeave Form 144s (20 Nov 2026). Re-checked 23 Nov 2026: nothing newer than 20 Nov for any registrant (weekend). Re-checked 24 Nov 2026: Nvidia 8-K Item 5.02 (23 Nov, Huang reinstated as CEO) is the only new 8-K; no new 10-Q/10-K/20-F/6-K or 424B for any registrant; Nvidia's Q3 FY27 10-Q still not filed; no Applied Digital 8-K yet for its 23 Nov lease and bridge facility (press releases used, Mgmt). Re-checked 25-26 Nov: Applied Digital 8-K Items 1.01/3.02/7.01 (24 Nov, PEPA raised to $2.5bn) incorporated; CoreWeave Forms 4 (RSU tax withholding). Re-checked 27 Nov 2026 (EDGAR closed 26 Nov for US Thanksgiving): no new 10-Q/10-K/20-F/6-K/8-K/424B for any registrant; IREN AGM results 8-K and Nvidia's Q3 FY27 10-Q still not filed; no new Nscale S-1 amendment since 12 Nov; Galaxy Forms 4 (25 Nov, CEO and CFO open-market purchases) and a Core Scientific director Form 4 (10b5-1 sale) reviewed. "
           "Reviewed, not material to credit: Oracle 8-K Item 5.07 (20 Nov), SpaceX 8-K Item 5.02 (6 Nov), Applied Digital 8-K Item 5.07 (6 Nov), Applied Digital Schedule 13D/A (20 Nov), IREN Schedule 13G (19 Nov), Schedule 13G/13D and Form 4 filings."),
-  src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144","nvda8kCeo"])
+  src=["orcl8k","nbis6kCiti","wulf8kRev","spcx8kLease","wyfiQ","wyfi8k","wyfi8kb","crwv144","nvda8kCeo","apld8kPepa","crwv4Rsu","glxy4Buy"])
 
 out = dict(
-  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="26 Nov 2026",
+  updated_iso=now.isoformat(timespec="seconds"), updated_sgt=now.strftime("%d %b %Y, %H:%M"), asof="27 Nov 2026",
   sources=S, companies=companies, agg=agg, cost=cost, news=news, earlier=earlier, upcoming=upcoming,
   scale=scale, sim=dict(factors=sim, score=simScore), telecom=telecom, verdict=verdict, macro=macro,
   discrepancies=discrepancies, claims=claims, gaps=gaps, edgar=edgar,
